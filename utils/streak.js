@@ -48,11 +48,24 @@ export function calculateStreak(habitId, logs, habit, refDate = now()) {
   const dueYesterday = isHabitDueOnDate(habit, yesterday);
   const completedYesterday = dueYesterday && isCompletedOnDate(habitId, yesterdayStr, logs);
 
+  const longest = () => longestStreakEverForHabit(habitId, habit, logs, refDate);
+
+  // Due today but not checked in yet: streak stays 0 while yesterday still "counts" as motivation (at risk).
+  if (dueToday && !completedToday && completedYesterday) {
+    return {
+      currentStreak: 0,
+      longestStreak: longest(),
+      completedToday: false,
+      dueToday: true,
+      atRisk: true,
+    };
+  }
+
   if (dueYesterday && !completedYesterday) {
     if (completedToday) {
       return {
         currentStreak: 1,
-        longestStreak: longestStreakEverForHabit(habitId, habit, logs),
+        longestStreak: longest(),
         completedToday: true,
         dueToday: true,
         atRisk: false,
@@ -61,15 +74,15 @@ export function calculateStreak(habitId, logs, habit, refDate = now()) {
     if (dueToday && !completedToday) {
       return {
         currentStreak: 0,
-        longestStreak: longestStreakEverForHabit(habitId, habit, logs),
+        longestStreak: longest(),
         completedToday: false,
         dueToday: true,
-        atRisk: true,
+        atRisk: false,
       };
     }
     return {
       currentStreak: 0,
-      longestStreak: longestStreakEverForHabit(habitId, habit, logs),
+      longestStreak: longest(),
       completedToday: Boolean(completedToday),
       dueToday,
       atRisk: dueToday && !completedToday,
@@ -79,6 +92,11 @@ export function calculateStreak(habitId, logs, habit, refDate = now()) {
   let currentStreak = 0;
   let i = 0;
   const maxDays = 3650;
+  // When today is not a scheduled day, the single most recent missed due (e.g. Fri before Sun) may
+  // sit between "today" and an otherwise valid run (Mon+Wed done). Skip at most one such miss before
+  // the first completed due; a second miss while still at streak 0 means the chain is broken (test 12).
+  const allowOneLeadingMissedDue = !dueToday;
+  let usedLeadingMissedDueSkip = false;
 
   while (i < maxDays) {
     const d = subDays(today, i);
@@ -102,12 +120,17 @@ export function calculateStreak(habitId, logs, habit, refDate = now()) {
       i += 1;
       continue;
     }
+    if (allowOneLeadingMissedDue && currentStreak === 0 && !usedLeadingMissedDueSkip) {
+      usedLeadingMissedDueSkip = true;
+      i += 1;
+      continue;
+    }
     break;
   }
 
   return {
     currentStreak,
-    longestStreak: longestStreakEverForHabit(habitId, habit, logs),
+    longestStreak: longest(),
     completedToday: Boolean(completedToday),
     dueToday,
     atRisk: dueToday && !completedToday,
