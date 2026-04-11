@@ -7,11 +7,21 @@
     "icon": "./assets/images/icon.png",
     "scheme": "fajr",
     "userInterfaceStyle": "automatic",
+    "privacy": "unlisted",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kasrah.fajr",
+      "buildNumber": "1"
     },
     "android": {
+      "package": "com.kasrah.fajr",
+      "versionCode": 1,
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -30,8 +40,10 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/icon.png",
-          "color": "#5C7A5F"
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#5C7A5F",
+          "androidMode": "default",
+          "androidCollapsedTitle": "Fajr"
         }
       ],
       [
