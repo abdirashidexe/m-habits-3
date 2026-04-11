@@ -1,0 +1,257 @@
+{
+  "common": {
+    "ok": "ٹھیک",
+    "cancel": "منسوخ",
+    "continue": "جاری رکھیں",
+    "save": "محفوظ",
+    "delete": "حذف",
+    "close": "بند",
+    "version": "ورژن {{v}}",
+    "dash": "—"
+  },
+  "tabs": {
+    "home": "ہوم",
+    "habits": "عادات",
+    "stats": "اعدادوشمار",
+    "profile": "پروفائل"
+  },
+  "home": {
+    "salam": "السلام علیکم",
+    "greetMorning": "صبح بخیر، {{name}}",
+    "greetAfternoon": "دوپہر بخیر، {{name}}",
+    "greetEvening": "شام بخیر، {{name}}",
+    "friend": "دوست",
+    "leftToday": "آج باقی",
+    "todaysHabits": "آج کی عادات",
+    "noHabitsDue": "آج کوئی مخصوص عادت نہیں۔",
+    "addHabit": "عادت شامل کریں",
+    "openProfile": "پروفائل کھولیں",
+    "a11yAddHabit": "عادت شامل کریں"
+  },
+  "habits": {
+    "title": "عادات",
+    "subtitle": "ایسی عادتیں بنائیں جو آپ کے ساتھ رہیں۔",
+    "reorder": "ترتیب بدلیں",
+    "done": "ہو گیا",
+    "emptyTitle": "ابھی کوئی عادت نہیں",
+    "emptyMsg": "+ دبائیں پہلی عادت بنانے کے لیے۔ چھوٹے قدم، برکت والی استقامت۔",
+    "daily": "روزانہ",
+    "specificDays": "مخصوص دن",
+    "dayShortSun": "ات",
+    "dayShortMon": "سو",
+    "dayShortTue": "من",
+    "dayShortWed": "بد",
+    "dayShortThu": "جمع",
+    "dayShortFri": "جمع",
+    "dayShortSat": "ہف",
+    "streak": "سلسلہ {{count}}",
+    "plusTitle": "فجر پلس",
+    "plusLimitBody": "مفت اکاؤنٹ میں 3 عادتیں۔ لامحدود کے لیے پلس کھولیں۔",
+    "plusLockedTitle": "فجر پلس",
+    "plusLockedBody": "مفت پلان پر یہ عادت بند ہے۔ لامحدود کے لیے پلس۔",
+    "deleteTitle": "عادت حذف",
+    "deleteMsg": "«{{name}}» ہٹائیں؟ واپس نہیں ہوگا۔",
+    "a11yReorderDone": "ترتیب مکمل",
+    "a11yReorder": "عادات کی ترتیب",
+    "a11yMoveUp": "اوپر",
+    "a11yMoveDown": "نیچے",
+    "a11yEdit": "ترمیم",
+    "a11yDelete": "حذف",
+    "a11yFab": "عادت شامل"
+  },
+  "stats": {
+    "title": "اعدادوشمار",
+    "subtitle": "غور و فکر، بےمعنی تکرار نہیں۔",
+    "yourStreaks": "آپ کے سلسلے",
+    "noStreaks": "آپ کے پاس کبھی بھی عادت نہیں ہے۔",
+    "longest": "سب سے لمبا {{count}} دن",
+    "longest_plural": "سب سے لمبا {{count}} دن",
+    "weekGlance": "اس ہفتے کا جائزہ",
+    "dayLetterSun": "ا",
+    "dayLetterMon": "س",
+    "dayLetterTue": "م",
+    "dayLetterWed": "ب",
+    "dayLetterThu": "ج",
+    "dayLetterFri": "ج",
+    "dayLetterSat": "ہ",
+    "plusTitle": "فجر پلس",
+    "plusHint": "مفت میں یہ ہفتہ۔ پلس میں گہری تاریخ۔"
+  },
+  "profile": {
+    "title": "پروفائل",
+    "yourName": "آپ کا نام",
+    "tapToEdit": "تبدیلی کے لیے تھپتھپائیں",
+    "memberSince": "رکن {{date}} سے",
+    "longestStreak": "کل لمبا سلسلہ: {{count}} دن",
+    "longestStreak_plural": "کل لمبا سلسلہ: {{count}} دن",
+    "settings": "ترتیبات",
+    "darkMode": "ڈارک موڈ",
+    "appColors": "ایپ کے رنگ",
+    "language": "زبان",
+    "notifications": "اطلاعات",
+    "reminderDefaults": "یاد دہانی ڈیفالٹ",
+    "resetAll": "سب ڈیٹا مٹائیں",
+    "about": "متعلق",
+    "aboutBody": "فجر قرآن اور روزانہ عادات کا پرسکون ساتھی ہے۔ بغیر نیٹ کے، اپنی رفتار سے، اخلاص کے ساتھ۔",
+    "privacyLink": "رازداری (جلد لنک)",
+    "unlockPlus": "فجر پلس کھولیں",
+    "plusSince": "{{date}} سے",
+    "plusStar": "✦ فجر پلس",
+    "benefit1": "لامحدود عادتیں",
+    "benefit2": "مکمل تاریخ (30 دن اور ہمہ وقت)",
+    "benefit3": "سلسلہ تحفظ (جلد)",
+    "benefit4": "اپنی تھیم (جلد)",
+    "comingSoonTitle": "جلد آ رہا",
+    "comingSoonPayment": "اگلے اپ ڈیٹ میں ادائیگی۔",
+    "reminderDefaultsTitle": "یاد دہانی",
+    "reminderDefaultsMsg": "جلد۔",
+    "privacyTitle": "رازداری",
+    "privacyMsg": "مستقل پالیسی لنک بعد میں۔",
+    "resetTitle": "سب ڈیٹا مٹائیں؟",
+    "resetMsg": "عادتیں، لاگز، پروفائل اس ڈیوائس سے ہٹ جائیں گے۔",
+    "resetContinue": "جاری",
+    "resetSureTitle": "پکا؟",
+    "resetSureMsg": "واپس نہیں۔",
+    "eraseAll": "سب مٹا دیں"
+  },
+  "plus": {
+    "badge": "✦ پلس"
+  },
+  "addHabit": {
+    "newTitle": "نئی عادت",
+    "editTitle": "عادت میں ترمیم",
+    "habitName": "عادت کا نام",
+    "namePlaceholder": "مثلاً ظہر باجماعت",
+    "chars": "{{n}}/40",
+    "frequency": "تعدد",
+    "everyDay": "ہر روز",
+    "specificDays": "مخصوص دن",
+    "reminder": "یاد دہانی",
+    "hour": "گھنٹہ (0–23)",
+    "minute": "منٹ (0–59)",
+    "save": "محفوظ",
+    "plusTitle": "فجر پلس",
+    "plusBody": "مفت میں 3 عادتیں۔ لامحدود کے لیے پلس۔"
+  },
+  "onboarding": {
+    "title": "فجر",
+    "tagline": "برکت بھرے دنیا کے لیے آپ کا روزانہ ساتھی",
+    "continue": "اگلا",
+    "chooseLanguage": "زبان چنیں",
+    "languageHint": "پروفائل سے کسی وقت بدل سکتے ہیں۔",
+    "trackTitle": "جو اہم ہے ٹریک کریں",
+    "trackBody": "فجر قرآن کے روزانہ ہدف اور اپنی راہ کی عادتیں بنانے میں مدد کرتا ہے۔",
+    "nameQuestion": "آپ کو کیا کہیں؟",
+    "namePlaceholder": "آپ کا نام",
+    "getStarted": "شروع"
+  },
+  "appColors": {
+    "title": "ایپ کے رنگ",
+    "pink": "گلابی",
+    "main": "بنیادی",
+    "blue": "نیلا",
+    "red": "سرخ",
+    "orange": "نارنجی",
+    "purple": "جامنی",
+    "brown": "بھورا",
+    "gray": "گہرا سرمئی",
+    "default": "ڈیفالٹ"
+  },
+  "languageModal": {
+    "title": "زبان"
+  },
+  "devTools": {
+    "title": "ڈیولپر ٹولز",
+    "dateOverride": "تاریخ اووررائیڈ",
+    "dateHelp": "`fajr_dev_date` سیٹ کریں۔ خالی کریں بند کرنے کو۔",
+    "overrideLabel": "تاریخ (YYYY-MM-DD)",
+    "overridePh": "2026-04-07",
+    "apply": "لگائیں",
+    "streakTesting": "سلسلہ ٹیسٹ",
+    "streakHelp": "صرف لاگز بدلتے ہیں۔",
+    "inject7": "7 دن مکمل انجیکٹ",
+    "injectMissed": "کل چھوٹا ہوا",
+    "clearLogs": "سب لاگ صاف",
+    "clearLogsTitle": "لاگ صاف؟",
+    "clearLogsMsg": "لاگز صاف، عادتیں رہیں گی۔",
+    "clearLogsBtn": "لاگ صاف",
+    "invalidDate": "غلط تاریخ",
+    "invalidDateMsg": "YYYY-MM-DD",
+    "injected": "انجیکٹ ہو گیا",
+    "injected7": "سب عادتوں پر 7 دن۔",
+    "injectedMissed": "کل چھوٹا۔"
+  },
+  "ritual": {
+    "title": "فہرست مکمل",
+    "sub": "الحمدللہ"
+  },
+  "habitCard": {
+    "streak": "{{fire}}{{count}} دن کا سلسلہ",
+    "atRisk": " · خطرے میں"
+  },
+  "notifications": {
+    "reminderBody": "سلسلہ نہ توڑیں — آج لاگ کریں۔",
+    "channelName": "فجر یاد دہانیاں"
+  },
+  "dates": {
+    "hijri": "{{day}} {{month}} {{year}} {{ah}}",
+    "ah": "ھ"
+  },
+  "hijriMonths": {
+    "1": "محرم",
+    "2": "صفر",
+    "3": "ربیع الاول",
+    "4": "ربیع الثانی",
+    "5": "جمادی الاول",
+    "6": "جمادی الثانی",
+    "7": "رجب",
+    "8": "شعبان",
+    "9": "رمضان",
+    "10": "شوال",
+    "11": "ذوالقعدہ",
+    "12": "ذوالحجہ"
+  },
+  "motivation": {
+    "0": {
+      "text": "اللہ کو سب سے محبوب اعمال وہ ہیں جو دائمی ہوں، خواہ تھوڑے ہوں۔",
+      "source": "حدیث — بخاری ومسلم"
+    },
+    "1": {
+      "text": "اللہ کسی پر اس سے زیادہ بوجھ نہیں ڈالتا جتنا وہ سہ سکے — ایک ایک قدم۔",
+      "source": "قرآن — ۲:۲۸۶"
+    },
+    "2": {
+      "text": "بے شک مشکل کے ساتھ آسانی ہے۔",
+      "source": "قرآن — ۹۴:۵–۶"
+    },
+    "3": {
+      "text": "اپنی اونٹ باندھو، پھر اللہ پر بھروسہ کرو۔",
+      "source": "حدیث — ترمذی"
+    },
+    "4": {
+      "text": "مضبوط مومن بہتر اور اللہ کو زیادہ محبوب ہے کمزور مومن سے۔",
+      "source": "حدیث — مسلم"
+    },
+    "5": {
+      "text": "اللہ سے ڈرو، تمہیں وہ تم سے پہلے ملے گا۔",
+      "source": "حدیث — ترمذی"
+    },
+    "6": {
+      "text": "دنیا مومن کی جیل اور کافر کی جنت ہے۔",
+      "source": "حدیث — مسلم"
+    },
+    "7": {
+      "text": "جو علم کی راہ چلے اللہ اسے جنت کا راستہ آسان کر دے۔",
+      "source": "حدیث — مسلم"
+    },
+    "8": {
+      "text": "دل کو فانی سے نہ باندھو — پائیدار گھر بناؤ۔",
+      "source": "یاد دہانی"
+    },
+    "9": {
+      "text": "اللہ صبر والوں کے ساتھ ہے — اخلاص سے جاری رکھو۔",
+      "source": "قرآن — ۲:۱۵۳"
+    }
+  },
+  "devBanner": "ڈیولپر — تاریخ اووررائیڈ ({{date}})"
+}

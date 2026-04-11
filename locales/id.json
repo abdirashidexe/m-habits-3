@@ -1,0 +1,257 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Batal",
+    "continue": "Lanjutkan",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "close": "Tutup",
+    "version": "Versi {{v}}",
+    "dash": "—"
+  },
+  "tabs": {
+    "home": "Beranda",
+    "habits": "Kebiasaan",
+    "stats": "Statistik",
+    "profile": "Profil"
+  },
+  "home": {
+    "salam": "السلام عليكم",
+    "greetMorning": "Selamat pagi, {{name}}",
+    "greetAfternoon": "Selamat siang, {{name}}",
+    "greetEvening": "Selamat malam, {{name}}",
+    "friend": "teman",
+    "leftToday": "tersisa hari ini",
+    "todaysHabits": "Kebiasaan hari ini",
+    "noHabitsDue": "Tidak ada kebiasaan kustom yang jatuh tempo hari ini.",
+    "addHabit": "Tambah kebiasaan",
+    "openProfile": "Buka profil",
+    "a11yAddHabit": "Tambah kebiasaan"
+  },
+  "habits": {
+    "title": "Kebiasaan",
+    "subtitle": "Bangun ritme yang menemani Anda.",
+    "reorder": "Urutkan ulang",
+    "done": "Selesai",
+    "emptyTitle": "Belum ada kebiasaan",
+    "emptyMsg": "Ketuk tombol + untuk membuat kebiasaan pertama Anda.",
+    "daily": "Setiap hari",
+    "specificDays": "Hari tertentu",
+    "dayShortSun": "Min",
+    "dayShortMon": "Sen",
+    "dayShortTue": "Sel",
+    "dayShortWed": "Rab",
+    "dayShortThu": "Kam",
+    "dayShortFri": "Jum",
+    "dayShortSat": "Sab",
+    "streak": "Rangkaian {{count}}",
+    "plusTitle": "Fajr Plus",
+    "plusLimitBody": "Akun gratis dapat melacak hingga 3 kebiasaan kustom. Buka Plus untuk kebiasaan tanpa batas.",
+    "plusLockedTitle": "Fajr Plus",
+    "plusLockedBody": "Kebiasaan ini terkunci di paket gratis. Buka Plus untuk mengelola kebiasaan tanpa batas.",
+    "deleteTitle": "Hapus kebiasaan",
+    "deleteMsg": "Hapus \"{{name}}\"? Tindakan ini tidak dapat dibatalkan.",
+    "a11yReorderDone": "Selesai mengurutkan ulang kebiasaan",
+    "a11yReorder": "Urutkan ulang kebiasaan",
+    "a11yMoveUp": "Pindahkan kebiasaan ke atas",
+    "a11yMoveDown": "Pindahkan kebiasaan ke bawah",
+    "a11yEdit": "Edit kebiasaan",
+    "a11yDelete": "Hapus kebiasaan",
+    "a11yFab": "Tambah kebiasaan"
+  },
+  "stats": {
+    "title": "Statistik",
+    "subtitle": "Renungan, bukan pengulangan kosong.",
+    "yourStreaks": "Rangkaian Anda",
+    "noStreaks": "Belum ada kebiasaan untuk dilacak.",
+    "longest": "Terpanjang {{count}} hari",
+    "longest_plural": "Terpanjang {{count}} hari",
+    "weekGlance": "Minggu ini sekilas",
+    "dayLetterSun": "M",
+    "dayLetterMon": "S",
+    "dayLetterTue": "S",
+    "dayLetterWed": "R",
+    "dayLetterThu": "K",
+    "dayLetterFri": "J",
+    "dayLetterSat": "S",
+    "plusTitle": "Fajr Plus",
+    "plusHint": "Paket gratis menampilkan tampilan minggu ini. Plus menambah riwayat yang lebih dalam."
+  },
+  "profile": {
+    "title": "Profil",
+    "yourName": "Nama Anda",
+    "tapToEdit": "Ketuk untuk mengedit",
+    "memberSince": "Anggota sejak {{date}}",
+    "longestStreak": "Rangkaian terpanjang keseluruhan: {{count}} hari",
+    "longestStreak_plural": "Rangkaian terpanjang keseluruhan: {{count}} hari",
+    "settings": "Pengaturan",
+    "darkMode": "Mode gelap",
+    "appColors": "Warna aplikasi",
+    "language": "Bahasa",
+    "notifications": "Notifikasi",
+    "reminderDefaults": "Pengingat bawaan",
+    "resetAll": "Hapus semua data",
+    "about": "Tentang",
+    "aboutBody": "Fajr adalah pendamping tenang untuk Al-Qur'an dan kebiasaan harian. Dibuat agar Anda bisa konsisten dengan ikhlas, tanpa internet, sesuai ritme Anda sendiri.",
+    "privacyLink": "Kebijakan privasi (tautan segera hadir)",
+    "unlockPlus": "Buka Fajr Plus",
+    "plusSince": "Sejak {{date}}",
+    "plusStar": "✦ Fajr Plus",
+    "benefit1": "Kebiasaan kustom tanpa batas",
+    "benefit2": "Riwayat statistik lengkap (tampilan 30 hari & sepanjang masa)",
+    "benefit3": "Perlindungan rangkaian (segera hadir)",
+    "benefit4": "Tema kustom (segera hadir)",
+    "comingSoonTitle": "Segera hadir",
+    "comingSoonPayment": "Integrasi pembayaran akan ditambahkan pada pembaruan berikutnya.",
+    "reminderDefaultsTitle": "Pengingat bawaan",
+    "reminderDefaultsMsg": "Segera hadir.",
+    "privacyTitle": "Kebijakan privasi",
+    "privacyMsg": "Tautan kebijakan privasi khusus akan ditambahkan pada pembaruan mendatang.",
+    "resetTitle": "Hapus semua data?",
+    "resetMsg": "Ini menghapus kebiasaan, log, dan profil dari perangkat ini.",
+    "resetContinue": "Lanjutkan",
+    "resetSureTitle": "Anda benar-benar yakin?",
+    "resetSureMsg": "Tindakan ini tidak dapat dibatalkan.",
+    "eraseAll": "Hapus semuanya"
+  },
+  "plus": {
+    "badge": "✦ Plus"
+  },
+  "addHabit": {
+    "newTitle": "Kebiasaan baru",
+    "editTitle": "Edit kebiasaan",
+    "habitName": "Nama kebiasaan",
+    "namePlaceholder": "mis. Dzuhur berjamaah",
+    "chars": "{{n}}/40",
+    "frequency": "Frekuensi",
+    "everyDay": "Setiap hari",
+    "specificDays": "Hari tertentu",
+    "reminder": "Pengingat",
+    "hour": "Jam (0–23)",
+    "minute": "Menit (0–59)",
+    "save": "Simpan",
+    "plusTitle": "Fajr Plus",
+    "plusBody": "Akun gratis dapat melacak hingga 3 kebiasaan kustom. Buka Plus untuk kebiasaan tanpa batas."
+  },
+  "onboarding": {
+    "title": "Fajr",
+    "tagline": "Pendamping harian Anda untuk hidup penuh berkah",
+    "continue": "Berikutnya",
+    "chooseLanguage": "Pilih bahasa Anda",
+    "languageHint": "Anda dapat mengubahnya kapan saja di Profil.",
+    "trackTitle": "Lacak yang penting",
+    "trackBody": "Fajr membantu Anda dekat dengan Al-Qur'an melalui target bacaan harian dan membangun kebiasaan yang Anda pilih untuk jalan Anda sendiri.",
+    "nameQuestion": "Bagaimana kami memanggil Anda?",
+    "namePlaceholder": "Nama Anda",
+    "getStarted": "Mulai"
+  },
+  "appColors": {
+    "title": "Warna aplikasi",
+    "pink": "Merah muda",
+    "main": "Utama",
+    "blue": "Biru",
+    "red": "Merah",
+    "orange": "Oranye",
+    "purple": "Ungu",
+    "brown": "Cokelat",
+    "gray": "Abu-abu gelap",
+    "default": "Bawaan"
+  },
+  "languageModal": {
+    "title": "Bahasa"
+  },
+  "devTools": {
+    "title": "Alat pengembang",
+    "dateOverride": "Ganti tanggal",
+    "dateHelp": "Atur `fajr_dev_date` untuk mengganti waktu di aplikasi. Kosongkan untuk menonaktifkan.",
+    "overrideLabel": "Tanggal ganti (YYYY-MM-DD)",
+    "overridePh": "2026-04-07",
+    "apply": "Terapkan",
+    "streakTesting": "Uji rangkaian",
+    "streakHelp": "Tindakan ini hanya memengaruhi log (kebiasaan dan profil tetap ada).",
+    "inject7": "Sisipkan 7 hari selesai (semua kebiasaan)",
+    "injectMissed": "Sisipkan terlewat kemarin (putuskan rangkaian)",
+    "clearLogs": "Hapus semua log",
+    "clearLogsTitle": "Hapus log?",
+    "clearLogsMsg": "Ini menghapus semua log, tetapi mempertahankan kebiasaan dan profil Anda.",
+    "clearLogsBtn": "Hapus log",
+    "invalidDate": "Tanggal tidak valid",
+    "invalidDateMsg": "Gunakan YYYY-MM-DD.",
+    "injected": "Disisipkan",
+    "injected7": "Menambahkan 7 hari log selesai untuk semua kebiasaan.",
+    "injectedMissed": "Menandai kemarin sebagai terlewat (memutus rangkaian)."
+  },
+  "ritual": {
+    "title": "Semua daftar selesai",
+    "sub": "Alhamdulillāh"
+  },
+  "habitCard": {
+    "streak": "{{fire}}rangkaian {{count}} hari",
+    "atRisk": " · Berisiko"
+  },
+  "notifications": {
+    "reminderBody": "Jangan putus rangkaian Anda — ketuk untuk mencatat hari ini.",
+    "channelName": "Pengingat Fajr"
+  },
+  "dates": {
+    "hijri": "{{day}} {{month}} {{year}} {{ah}}",
+    "ah": "H"
+  },
+  "hijriMonths": {
+    "1": "Muharram",
+    "2": "Safar",
+    "3": "Rabi' al-awwal",
+    "4": "Rabi' al-akhir",
+    "5": "Jumadil awal",
+    "6": "Jumadil akhir",
+    "7": "Rajab",
+    "8": "Sya'ban",
+    "9": "Ramadan",
+    "10": "Syawal",
+    "11": "Dzulqa'dah",
+    "12": "Dzulhijjah"
+  },
+  "motivation": {
+    "0": {
+      "text": "Amal yang paling dicintai Allah adalah yang dilakukan terus-menerus, meskipun sedikit.",
+      "source": "Hadits — Shahih al-Bukhari; Shahih Muslim"
+    },
+    "1": {
+      "text": "Allah tidak membebani seseorang melainkan sesuai dengan kesanggupannya — melangkahlah sedikit demi sedikit.",
+      "source": "Al-Qur'an — 2:286"
+    },
+    "2": {
+      "text": "Sesungguhnya bersama kesulitan ada kemudahan.",
+      "source": "Al-Qur'an — 94:5–6"
+    },
+    "3": {
+      "text": "Ikat untamu, lalu bertawakal kepada Allah.",
+      "source": "Hadits — Jami' at-Tirmidzi"
+    },
+    "4": {
+      "text": "Orang mukmin yang kuat lebih baik dan lebih dicintai Allah daripada yang lemah.",
+      "source": "Hadits — Shahih Muslim"
+    },
+    "5": {
+      "text": "Bertakwalah kepada Allah, niscaya engkau akan mendapati-Nya di hadapanmu.",
+      "source": "Hadits — Jami' at-Tirmidzi"
+    },
+    "6": {
+      "text": "Dunia adalah penjara bagi orang mukmin dan surga bagi orang kafir.",
+      "source": "Hadits — Shahih Muslim"
+    },
+    "7": {
+      "text": "Barang siapa menempuh jalan untuk mencari ilmu, Allah akan mudahkan baginya jalan ke surga.",
+      "source": "Hadits — Shahih Muslim"
+    },
+    "8": {
+      "text": "Janganlah hatimu terpaku pada yang binasa — bangunlah untuk rumah yang kekal.",
+      "source": "Pengingat"
+    },
+    "9": {
+      "text": "Allah beserta orang-orang yang sabar — teruslah dengan ikhlas.",
+      "source": "Al-Qur'an — 2:153"
+    }
+  },
+  "devBanner": "MODE DEV — ganti tanggal aktif ({{date}})"
+}

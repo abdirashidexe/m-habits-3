@@ -1,0 +1,257 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "version": "Version {{v}}",
+    "dash": "—"
+  },
+  "tabs": {
+    "home": "Home",
+    "habits": "Habits",
+    "stats": "Stats",
+    "profile": "Profile"
+  },
+  "home": {
+    "salam": "السلام عليكم",
+    "greetMorning": "Good morning, {{name}}",
+    "greetAfternoon": "Good afternoon, {{name}}",
+    "greetEvening": "Good evening, {{name}}",
+    "friend": "friend",
+    "leftToday": "left today",
+    "todaysHabits": "Today's habits",
+    "noHabitsDue": "No custom habits due today.",
+    "addHabit": "Add habit",
+    "openProfile": "Open profile",
+    "a11yAddHabit": "Add habit"
+  },
+  "habits": {
+    "title": "Habits",
+    "subtitle": "Build rhythms that stay with you.",
+    "reorder": "Reorder",
+    "done": "Done",
+    "emptyTitle": "No habits yet",
+    "emptyMsg": "Tap the + button to create your first habit.",
+    "daily": "Daily",
+    "specificDays": "Specific days",
+    "dayShortSun": "Sun",
+    "dayShortMon": "Mon",
+    "dayShortTue": "Tue",
+    "dayShortWed": "Wed",
+    "dayShortThu": "Thu",
+    "dayShortFri": "Fri",
+    "dayShortSat": "Sat",
+    "streak": "Streak {{count}}",
+    "plusTitle": "Fajr Plus",
+    "plusLimitBody": "Free accounts can track up to 3 custom habits. Unlock Plus for unlimited habits.",
+    "plusLockedTitle": "Fajr Plus",
+    "plusLockedBody": "This habit is locked on the free plan. Unlock Plus to manage unlimited habits.",
+    "deleteTitle": "Delete habit",
+    "deleteMsg": "Remove \"{{name}}\"? This cannot be undone.",
+    "a11yReorderDone": "Done reordering habits",
+    "a11yReorder": "Reorder habits",
+    "a11yMoveUp": "Move habit up",
+    "a11yMoveDown": "Move habit down",
+    "a11yEdit": "Edit habit",
+    "a11yDelete": "Delete habit",
+    "a11yFab": "Add habit"
+  },
+  "stats": {
+    "title": "Stats",
+    "subtitle": "Reflection, not repetition.",
+    "yourStreaks": "Your streaks",
+    "noStreaks": "No habits to track yet.",
+    "longest": "Longest {{count}} day",
+    "longest_plural": "Longest {{count}} days",
+    "weekGlance": "This week at a glance",
+    "dayLetterSun": "S",
+    "dayLetterMon": "M",
+    "dayLetterTue": "T",
+    "dayLetterWed": "W",
+    "dayLetterThu": "T",
+    "dayLetterFri": "F",
+    "dayLetterSat": "S",
+    "plusTitle": "Fajr Plus",
+    "plusHint": "Free plan shows this week view. Plus adds deeper history views."
+  },
+  "profile": {
+    "title": "Profile",
+    "yourName": "Your name",
+    "tapToEdit": "Tap to edit",
+    "memberSince": "Member since {{date}}",
+    "longestStreak": "Longest overall streak: {{count}} day",
+    "longestStreak_plural": "Longest overall streak: {{count}} days",
+    "settings": "Settings",
+    "darkMode": "Dark mode",
+    "appColors": "App Colors",
+    "language": "Language",
+    "notifications": "Notifications",
+    "reminderDefaults": "Reminder defaults",
+    "resetAll": "Reset all data",
+    "about": "About",
+    "aboutBody": "Fajr is a calm companion for Quran and daily habits. It's designed to help you show up with sincerity, offline and in your own rhythm.",
+    "privacyLink": "Privacy policy (link coming soon)",
+    "unlockPlus": "Unlock Fajr Plus",
+    "plusSince": "Since {{date}}",
+    "plusStar": "✦ Fajr Plus",
+    "benefit1": "Unlimited custom habits",
+    "benefit2": "Full stats history (30-day & all-time views)",
+    "benefit3": "Streak protection (coming soon)",
+    "benefit4": "Custom themes (coming soon)",
+    "comingSoonTitle": "Coming soon",
+    "comingSoonPayment": "Payment integration will be added in the next update.",
+    "reminderDefaultsTitle": "Reminder defaults",
+    "reminderDefaultsMsg": "Coming soon.",
+    "privacyTitle": "Privacy policy",
+    "privacyMsg": "A dedicated privacy policy link will be added in a future update.",
+    "resetTitle": "Reset all data?",
+    "resetMsg": "This removes habits, logs, and profile from this device.",
+    "resetContinue": "Continue",
+    "resetSureTitle": "Are you absolutely sure?",
+    "resetSureMsg": "This cannot be undone.",
+    "eraseAll": "Erase everything"
+  },
+  "plus": {
+    "badge": "✦ Plus"
+  },
+  "addHabit": {
+    "newTitle": "New habit",
+    "editTitle": "Edit habit",
+    "habitName": "Habit name",
+    "namePlaceholder": "e.g. Dhuhr in congregation",
+    "chars": "{{n}}/40",
+    "frequency": "Frequency",
+    "everyDay": "Every Day",
+    "specificDays": "Specific Days",
+    "reminder": "Reminder",
+    "hour": "Hour (0–23)",
+    "minute": "Minute (0–59)",
+    "save": "Save",
+    "plusTitle": "Fajr Plus",
+    "plusBody": "Free accounts can track up to 3 custom habits. Unlock Plus for unlimited habits."
+  },
+  "onboarding": {
+    "title": "Fajr",
+    "tagline": "Your daily companion for a life of barakah",
+    "continue": "Next",
+    "chooseLanguage": "Choose your language",
+    "languageHint": "You can change this anytime in Profile.",
+    "trackTitle": "Track what matters",
+    "trackBody": "Fajr helps you stay close to the Quran with a daily reading goal and build habits you shape for your own path.",
+    "nameQuestion": "What should we call you?",
+    "namePlaceholder": "Your name",
+    "getStarted": "Start"
+  },
+  "appColors": {
+    "title": "App Colors",
+    "pink": "Pink",
+    "main": "Main",
+    "blue": "Blue",
+    "red": "Red",
+    "orange": "Orange",
+    "purple": "Purple",
+    "brown": "Brown",
+    "gray": "Dark Gray",
+    "default": "Default"
+  },
+  "languageModal": {
+    "title": "Language"
+  },
+  "devTools": {
+    "title": "Dev Tools",
+    "dateOverride": "Date override",
+    "dateHelp": "Set `fajr_dev_date` to override time in the app. Clear the field to disable.",
+    "overrideLabel": "Override date (YYYY-MM-DD)",
+    "overridePh": "2026-04-07",
+    "apply": "Apply",
+    "streakTesting": "Streak testing",
+    "streakHelp": "These actions affect logs only (habits and profile are preserved).",
+    "inject7": "Inject 7 days completed (all habits)",
+    "injectMissed": "Inject missed yesterday (break streaks)",
+    "clearLogs": "Clear all logs",
+    "clearLogsTitle": "Clear logs?",
+    "clearLogsMsg": "This clears all logs, but keeps habits and your profile.",
+    "clearLogsBtn": "Clear logs",
+    "invalidDate": "Invalid date",
+    "invalidDateMsg": "Use YYYY-MM-DD.",
+    "injected": "Injected",
+    "injected7": "Added 7 days of completed logs for all habits.",
+    "injectedMissed": "Marked yesterday as missed (breaking streaks)."
+  },
+  "ritual": {
+    "title": "Full list done",
+    "sub": "Alhamdulillāh"
+  },
+  "habitCard": {
+    "streak": "{{fire}}{{count}} day streak",
+    "atRisk": " · At risk"
+  },
+  "notifications": {
+    "reminderBody": "Don't break your streak — tap to log today.",
+    "channelName": "Fajr reminders"
+  },
+  "dates": {
+    "hijri": "{{day}} {{month}} {{year}} {{ah}}",
+    "ah": "AH"
+  },
+  "hijriMonths": {
+    "1": "Muharram",
+    "2": "Safar",
+    "3": "Rabi' al-awwal",
+    "4": "Rabi' al-thani",
+    "5": "Jumada al-awwal",
+    "6": "Jumada al-thani",
+    "7": "Rajab",
+    "8": "Sha'ban",
+    "9": "Ramadan",
+    "10": "Shawwal",
+    "11": "Dhu al-Qi'dah",
+    "12": "Dhu al-Hijjah"
+  },
+  "motivation": {
+    "0": {
+      "text": "The most beloved deeds to Allah are those done consistently, even if small.",
+      "source": "Hadith — Sahih al-Bukhari; Sahih Muslim"
+    },
+    "1": {
+      "text": "Allah does not burden a soul beyond that it can bear — take one step at a time.",
+      "source": "Qur'an — 2:286"
+    },
+    "2": {
+      "text": "Verily, with hardship comes ease.",
+      "source": "Qur'an — 94:5–6"
+    },
+    "3": {
+      "text": "Tie your camel, then trust in Allah.",
+      "source": "Hadith — Jami' at-Tirmidhi"
+    },
+    "4": {
+      "text": "The strong believer is better and more beloved to Allah than the weak believer.",
+      "source": "Hadith — Sahih Muslim"
+    },
+    "5": {
+      "text": "Be mindful of Allah, and you will find Him before you.",
+      "source": "Hadith — Jami' at-Tirmidhi"
+    },
+    "6": {
+      "text": "The world is the believer's prison and the disbeliever's paradise.",
+      "source": "Hadith — Sahih Muslim"
+    },
+    "7": {
+      "text": "Whoever follows a path seeking knowledge, Allah will make easy for him the path to Paradise.",
+      "source": "Hadith — Sahih Muslim"
+    },
+    "8": {
+      "text": "Let not your heart be attached to what perishes — build for the lasting home.",
+      "source": "Reminder"
+    },
+    "9": {
+      "text": "Allah is with the patient — keep going with sincerity.",
+      "source": "Qur'an — 2:153"
+    }
+  },
+  "devBanner": "DEV MODE — date override active ({{date}})"
+}

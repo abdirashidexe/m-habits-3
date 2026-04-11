@@ -1,0 +1,257 @@
+{
+  "common": {
+    "ok": "Haye",
+    "cancel": "Jooji",
+    "continue": "Sii wad",
+    "save": "Kaydi",
+    "delete": "Tirtir",
+    "close": "Xir",
+    "version": "Nooca {{v}}",
+    "dash": "—"
+  },
+  "tabs": {
+    "home": "Guriga",
+    "habits": "Caadooyin",
+    "stats": "Tirooyin",
+    "profile": "Profile"
+  },
+  "home": {
+    "salam": "السلام عليكم",
+    "greetMorning": "Subax wanaagsan, {{name}}",
+    "greetAfternoon": "Galab wanaagsan, {{name}}",
+    "greetEvening": "Fiid wanaagsan, {{name}}",
+    "friend": "saaxiib",
+    "leftToday": "ka haray maanta",
+    "todaysHabits": "Caadooyinka maanta",
+    "noHabitsDue": "Ma jiraan caadooyin maanta la filayo.",
+    "addHabit": "Ku dar caado",
+    "openProfile": "Fur profile",
+    "a11yAddHabit": "Ku dar caado"
+  },
+  "habits": {
+    "title": "Caadooyin",
+    "subtitle": "Dhiso jilitaano kula sii jira.",
+    "reorder": "Kala horreysii",
+    "done": "Dhammay",
+    "emptyTitle": "Weli caado ma jirto",
+    "emptyMsg": "Taabo + si aad u abuurto caadadaada ugu horeysa. Tallaabo yar, joogto barakeysan.",
+    "daily": "Maalin kasta",
+    "specificDays": "Maalmo gaar ah",
+    "dayShortSun": "Ax",
+    "dayShortMon": "Is",
+    "dayShortTue": "Sa",
+    "dayShortWed": "Ar",
+    "dayShortThu": "Kh",
+    "dayShortFri": "Jim",
+    "dayShortSat": "Sab",
+    "streak": "Xiriir {{count}}",
+    "plusTitle": "Fajr Plus",
+    "plusLimitBody": "Akoonnada bilaash waxay u horseedaan 3 caado. Fur Plus si aan xad lahayn.",
+    "plusLockedTitle": "Fajr Plus",
+    "plusLockedBody": "Caadadan waxaa ku xiran qorshaha bilaash. Fur Plus si aad u maamusho.",
+    "deleteTitle": "Tirtir caado",
+    "deleteMsg": "Ka saar \"{{name}}\"? Lama celin karo.",
+    "a11yReorderDone": "Kala horreyntii way dhammaatay",
+    "a11yReorder": "Kala horreysii caadooyinka",
+    "a11yMoveUp": "Kor u qaad",
+    "a11yMoveDown": "Hoos u qaad",
+    "a11yEdit": "Wax ka beddel",
+    "a11yDelete": "Tirtir",
+    "a11yFab": "Ku dar caado"
+  },
+  "stats": {
+    "title": "Tirooyin",
+    "subtitle": "Feker, ma aha soo noqnoqoshada.",
+    "yourStreaks": "Xiriirkaaga",
+    "noStreaks": "Ma jiraan caadooyin maanta la filayo.",
+    "longest": "Ugu dheer {{count}} maalin",
+    "longest_plural": "Ugu dheer {{count}} maalmood",
+    "weekGlance": "Toddobaadkan si kooban",
+    "dayLetterSun": "A",
+    "dayLetterMon": "I",
+    "dayLetterTue": "S",
+    "dayLetterWed": "A",
+    "dayLetterThu": "Kh",
+    "dayLetterFri": "J",
+    "dayLetterSat": "S",
+    "plusTitle": "Fajr Plus",
+    "plusHint": "Qorshaha bilaash wuxuu muujiyaa toddobaadkan. Plus wuxuu ku darayaa taariikh qoto dheer."
+  },
+  "profile": {
+    "title": "Profile",
+    "yourName": "Magacaaga",
+    "tapToEdit": "Taabo si aad u wax ka beddesho",
+    "memberSince": "Xubin tan iyo {{date}}",
+    "longestStreak": "Xiriirka ugu dheer wadarta: {{count}} maalin",
+    "longestStreak_plural": "Xiriirka ugu dheer wadarta: {{count}} maalmood",
+    "settings": "Dejinta",
+    "darkMode": "Habka mugdiga ah",
+    "appColors": "Midabada app-ka",
+    "language": "Luqadda",
+    "notifications": "Ogeysiisyada",
+    "reminderDefaults": "Xusuusin caadiga ah",
+    "resetAll": "Tirtir dhammaan xogta",
+    "about": "Ku saabsan",
+    "aboutBody": "Fajr waa saaxiib xasilloon oo Quraanka iyo caadooyinka maalinlaha ah. Waxaa loogu talagalay inuu kaa caawiyo inaad si daacad ah u joogtid, adigoon internet lahayn.",
+    "privacyLink": "Siyaasadda asturnaanta (link dhawaan)",
+    "unlockPlus": "Fur Fajr Plus",
+    "plusSince": "Tan iyo {{date}}",
+    "plusStar": "✦ Fajr Plus",
+    "benefit1": "Caadooyin aan xad lahayn",
+    "benefit2": "Taariikh buuxa (30 maalmood & dhammaan waqtiyada)",
+    "benefit3": "Ilaalinta xiriirka (dhawaan)",
+    "benefit4": "Mawduucyo gaar ah (dhawaan)",
+    "comingSoonTitle": "Dhawaan",
+    "comingSoonPayment": "Lacag bixinta waxaa lagu dari doonaa cusboonaysiinta soo socota.",
+    "reminderDefaultsTitle": "Xusuusin caadiga ah",
+    "reminderDefaultsMsg": "Dhawaan.",
+    "privacyTitle": "Siyaasadda asturnaanta",
+    "privacyMsg": "Link gaar ah ayaa la dari doonaa mustaqbalka.",
+    "resetTitle": "Tirtir dhammaan xogta?",
+    "resetMsg": "Tirtir caadooyinka, diiwaannada, iyo profile-ka qalabkan.",
+    "resetContinue": "Sii wad",
+    "resetSureTitle": "Ma hubtaa gebi ahaanba?",
+    "resetSureMsg": "Lama celin karo.",
+    "eraseAll": "Tirtir wax walba"
+  },
+  "plus": {
+    "badge": "✦ Plus"
+  },
+  "addHabit": {
+    "newTitle": "Caado cusub",
+    "editTitle": "Wax ka beddel caado",
+    "habitName": "Magaca caadada",
+    "namePlaceholder": "tusaale Duhurka jamaaca",
+    "chars": "{{n}}/40",
+    "frequency": "Soo noqnoqoshada",
+    "everyDay": "Maalin kasta",
+    "specificDays": "Maalmo gaar ah",
+    "reminder": "Xusuusin",
+    "hour": "Saacad (0–23)",
+    "minute": "Daqiiqad (0–59)",
+    "save": "Kaydi",
+    "plusTitle": "Fajr Plus",
+    "plusBody": "Akoonnada bilaash waxay u horseedaan 3 caado. Fur Plus si aan xad lahayn."
+  },
+  "onboarding": {
+    "title": "Fajr",
+    "tagline": "Saaxiibkaaga maalinlaha ah nolol barakeysan",
+    "continue": "Hore",
+    "chooseLanguage": "Dooro luqaddaada",
+    "languageHint": "Waxaad beddeli kartaa Profile mar kasta.",
+    "trackTitle": "La soco waxa muhiimka ah",
+    "trackBody": "Fajr wuxuu kaa caawiyaa inaad Quraanka u dhowaato hadaf akhris maalinle ah iyo inaad dhisto caadooyin aad doorato.",
+    "nameQuestion": "Maxaan kuugu yeernaa?",
+    "namePlaceholder": "Magacaaga",
+    "getStarted": "Bilow"
+  },
+  "appColors": {
+    "title": "Midabada app-ka",
+    "pink": "Casaan",
+    "main": "Aasaasi",
+    "blue": "Buluug",
+    "red": "Cas",
+    "orange": "Liin",
+    "purple": "Buluug casaano",
+    "brown": "Bunni",
+    "gray": "Cawl madow",
+    "default": "Caadiga ah"
+  },
+  "languageModal": {
+    "title": "Luqadda"
+  },
+  "devTools": {
+    "title": "Qalabka horumarinta",
+    "dateOverride": "Taariikh ka hortag",
+    "dateHelp": "Deji `fajr_dev_date` si waqtiga app-ka loo beddelo. Fariinta nadiifi si loo joojiyo.",
+    "overrideLabel": "Taariikh (YYYY-MM-DD)",
+    "overridePh": "2026-04-07",
+    "apply": "Codso",
+    "streakTesting": "Tijaabinta xiriirka",
+    "streakHelp": "Waxay saameyn ku yeelataa diiwaannada kaliya.",
+    "inject7": "Ku dar 7 maalmood oo dhammay (dhammaan caadooyinka)",
+    "injectMissed": "Shalay sida la waayay (jebi xiriirka)",
+    "clearLogs": "Nadiifi dhammaan diiwaannada",
+    "clearLogsTitle": "Nadiifi diiwaannada?",
+    "clearLogsMsg": "Waxay nadiifisaa diiwaannada, laakiin waxay hayso caadooyinka iyo profile-ka.",
+    "clearLogsBtn": "Nadiifi diiwaannada",
+    "invalidDate": "Taariikh aan sax ahayn",
+    "invalidDateMsg": "Isticmaal YYYY-MM-DD.",
+    "injected": "La geliyey",
+    "injected7": "7 maalmood oo dhammay ayaa lagu daray dhammaan caadooyinka.",
+    "injectedMissed": "Shalay waxaa loo calaamadeeyay in la waayay."
+  },
+  "ritual": {
+    "title": "Liiska oo dhan waa dhammay",
+    "sub": "Alhamdulillah"
+  },
+  "habitCard": {
+    "streak": "{{fire}}{{count}} maalin oo xiriir",
+    "atRisk": " · Khatar"
+  },
+  "notifications": {
+    "reminderBody": "Ha jebin xiriirkaaga — taabo si aad u diiwaangeliso maanta.",
+    "channelName": "Xusuusinta Fajr"
+  },
+  "dates": {
+    "hijri": "{{day}} {{month}} {{year}} {{ah}}",
+    "ah": "AH"
+  },
+  "hijriMonths": {
+    "1": "Muharram",
+    "2": "Safar",
+    "3": "Rabi' al-awwal",
+    "4": "Rabi' al-thani",
+    "5": "Jumada al-awwal",
+    "6": "Jumada al-thani",
+    "7": "Rajab",
+    "8": "Sha'ban",
+    "9": "Ramadan",
+    "10": "Shawwal",
+    "11": "Dhu al-Qi'dah",
+    "12": "Dhu al-Hijjah"
+  },
+  "motivation": {
+    "0": {
+      "text": "Shaqooyinka ugu jecel Ilaahy waa kuwa joogtada ah, xitaa haddii ay yar yihiin.",
+      "source": "Xadiis — Bukhaari iyo Muslim"
+    },
+    "1": {
+      "text": "Ilaah ma culeysna nafta wax ka badan inta ay qaadi karto — tallaabo tallaabo.",
+      "source": "Quraan — 2:286"
+    },
+    "2": {
+      "text": "Runtii dhibaatada waxaa la jira fudayd.",
+      "source": "Quraan — 94:5–6"
+    },
+    "3": {
+      "text": "Xidh geela, ka dibna Ilaah ku aamini.",
+      "source": "Xadiis — Tirmidhi"
+    },
+    "4": {
+      "text": "Rumaysad xoog leh wuu ka fiican yahay oo Ilaahy u jecel yahay kan daciifka ah.",
+      "source": "Xadiis — Muslim"
+    },
+    "5": {
+      "text": "Ka dhawr Ilaah, waad ka heli doontaa hortaada.",
+      "source": "Xadiis — Tirmidhi"
+    },
+    "6": {
+      "text": "Dunidu waa xabsiga rumaysadka iyo jannada gaaloobayaasha.",
+      "source": "Xadiis — Muslim"
+    },
+    "7": {
+      "text": "Cidda raacda waddo cilmi raadinaysa, Ilaah wuxuu u fududeyn doonaa waddada Jannada.",
+      "source": "Xadiis — Muslim"
+    },
+    "8": {
+      "text": "Ha ku xidhin qalbigaaga wax baaba'aya — dhiso guriga waara.",
+      "source": "Xusuusin"
+    },
+    "9": {
+      "text": "Ilaah wuxuu la jiraa samirka — sii wad si daacad ah.",
+      "source": "Quraan — 2:153"
+    }
+  },
+  "devBanner": "HABKA HORUMARIYE — taariikh ka hortag firfircoon ({{date}})"
+}

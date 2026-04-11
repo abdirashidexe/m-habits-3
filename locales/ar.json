@@ -1,0 +1,257 @@
+{
+  "common": {
+    "ok": "حسناً",
+    "cancel": "إلغاء",
+    "continue": "متابعة",
+    "save": "حفظ",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "version": "الإصدار {{v}}",
+    "dash": "—"
+  },
+  "tabs": {
+    "home": "الرئيسية",
+    "habits": "العادات",
+    "stats": "الإحصائيات",
+    "profile": "الملف"
+  },
+  "home": {
+    "salam": "السلام عليكم",
+    "greetMorning": "صباح الخير، {{name}}",
+    "greetAfternoon": "مساء الخير، {{name}}",
+    "greetEvening": "مساء الخير، {{name}}",
+    "friend": "صديقي",
+    "leftToday": "متبقٍ اليوم",
+    "todaysHabits": "عادات اليوم",
+    "noHabitsDue": "لا عادات مخصصة مستحقة اليوم.",
+    "addHabit": "إضافة عادة",
+    "openProfile": "فتح الملف الشخصي",
+    "a11yAddHabit": "إضافة عادة"
+  },
+  "habits": {
+    "title": "العادات",
+    "subtitle": "ابنِ عاداتٍ تثبت معك.",
+    "reorder": "إعادة ترتيب",
+    "done": "تم",
+    "emptyTitle": "لا عادات بعد",
+    "emptyMsg": "اضغط + لإنشاء عادتك الأولى. خطوات صغيرة، ثبات مبارك.",
+    "daily": "يومي",
+    "specificDays": "أيام محددة",
+    "dayShortSun": "أح",
+    "dayShortMon": "إث",
+    "dayShortTue": "ث",
+    "dayShortWed": "أر",
+    "dayShortThu": "خ",
+    "dayShortFri": "ج",
+    "dayShortSat": "س",
+    "streak": "سلسلة {{count}}",
+    "plusTitle": "فجر بلس",
+    "plusLimitBody": "الحسابات المجانية تصل إلى 3 عادات. فعّل بلس لعادات غير محدودة.",
+    "plusLockedTitle": "فجر بلس",
+    "plusLockedBody": "هذه العادة مقفلة في الخطة المجانية. فعّل بلس لإدارة غير محدودة.",
+    "deleteTitle": "حذف العادة",
+    "deleteMsg": "إزالة «{{name}}»؟ لا يمكن التراجع.",
+    "a11yReorderDone": "انتهاء إعادة الترتيب",
+    "a11yReorder": "إعادة ترتيب العادات",
+    "a11yMoveUp": "نقل العادة لأعلى",
+    "a11yMoveDown": "نقل العادة لأسفل",
+    "a11yEdit": "تعديل العادة",
+    "a11yDelete": "حذف العادة",
+    "a11yFab": "إضافة عادة"
+  },
+  "stats": {
+    "title": "الإحصائيات",
+    "subtitle": "تأمّل، لا تكراراً بلا معنى.",
+    "yourStreaks": "سلاسلك", 
+    "noStreaks": "لا عادات لتتبع بعد",
+    "longest": "أطول سلسلة {{count}} يوم",
+    "longest_plural": "أطول سلسلة {{count}} أيام",
+    "weekGlance": "نظرة على هذا الأسبوع",
+    "dayLetterSun": "ح",
+    "dayLetterMon": "ن",
+    "dayLetterTue": "ث",
+    "dayLetterWed": "ر",
+    "dayLetterThu": "خ",
+    "dayLetterFri": "ج",
+    "dayLetterSat": "س",
+    "plusTitle": "فجر بلس",
+    "plusHint": "الخطة المجانية تعرض هذا الأسبوع. بلس يضيف تاريخاً أعمق."
+  },
+  "profile": {
+    "title": "الملف الشخصي",
+    "yourName": "اسمك",
+    "tapToEdit": "اضغط للتعديل",
+    "memberSince": "عضو منذ {{date}}",
+    "longestStreak": "أطول سلسلة إجمالية: {{count}} يوم",
+    "longestStreak_plural": "أطول سلسلة إجمالية: {{count}} أيام",
+    "settings": "الإعدادات",
+    "darkMode": "الوضع الداكن",
+    "appColors": "ألوان التطبيق",
+    "language": "اللغة",
+    "notifications": "الإشعارات",
+    "reminderDefaults": "تذكير افتراضي",
+    "resetAll": "مسح كل البيانات",
+    "about": "حول",
+    "aboutBody": "فجر رفيق هادئ للقرآن والعادات اليومية. صُمم لمساعدتك على الاستمرار بإخلاص، دون اتصال ووفق وتيرتك.",
+    "privacyLink": "سياسة الخصوصية (قريباً)",
+    "unlockPlus": "فعّل فجر بلس",
+    "plusSince": "منذ {{date}}",
+    "plusStar": "✦ فجر بلس",
+    "benefit1": "عادات مخصصة غير محدودة",
+    "benefit2": "إحصائيات كاملة (30 يوماً وكل الأوقات)",
+    "benefit3": "حماية السلسلة (قريباً)",
+    "benefit4": "سمات مخصصة (قريباً)",
+    "comingSoonTitle": "قريباً",
+    "comingSoonPayment": "سيتم إضافة الدفع في التحديث القادم.",
+    "reminderDefaultsTitle": "تذكير افتراضي",
+    "reminderDefaultsMsg": "قريباً.",
+    "privacyTitle": "سياسة الخصوصية",
+    "privacyMsg": "سيتم إضافة رابط سياسة الخصوصية لاحقاً.",
+    "resetTitle": "مسح كل البيانات؟",
+    "resetMsg": "يُزال العادات والسجلات والملف من هذا الجهاز.",
+    "resetContinue": "متابعة",
+    "resetSureTitle": "هل أنت متأكد تماماً؟",
+    "resetSureMsg": "لا يمكن التراجع.",
+    "eraseAll": "مسح كل شيء"
+  },
+  "plus": {
+    "badge": "✦ بلس"
+  },
+  "addHabit": {
+    "newTitle": "عادة جديدة",
+    "editTitle": "تعديل العادة",
+    "habitName": "اسم العادة",
+    "namePlaceholder": "مثال: الظهر في الجماعة",
+    "chars": "{{n}}/40",
+    "frequency": "التكرار",
+    "everyDay": "كل يوم",
+    "specificDays": "أيام محددة",
+    "reminder": "تذكير",
+    "hour": "الساعة (0–23)",
+    "minute": "الدقيقة (0–59)",
+    "save": "حفظ",
+    "plusTitle": "فجر بلس",
+    "plusBody": "الحسابات المجانية تصل إلى 3 عادات. فعّل بلس لعادات غير محدودة."
+  },
+  "onboarding": {
+    "title": "فجر",
+    "tagline": "رفيقك اليومي لحياة مباركة",
+    "continue": "التالي",
+    "chooseLanguage": "اختر لغتك",
+    "languageHint": "يمكنك تغييرها لاحقاً من الملف الشخصي.",
+    "trackTitle": "تتبع ما يهمك",
+    "trackBody": "فجر يساعدك على القرب من القرآن بهدف يومي وبناء عادات تختارها لطريقك.",
+    "nameQuestion": "كيف نناديك؟",
+    "namePlaceholder": "اسمك",
+    "getStarted": "ابدأ"
+  },
+  "appColors": {
+    "title": "ألوان التطبيق",
+    "pink": "وردي",
+    "main": "أساسي",
+    "blue": "أزرق",
+    "red": "أحمر",
+    "orange": "برتقالي",
+    "purple": "بنفسجي",
+    "brown": "بني",
+    "gray": "رمادي غامق",
+    "default": "افتراضي"
+  },
+  "languageModal": {
+    "title": "اللغة"
+  },
+  "devTools": {
+    "title": "أدوات المطور",
+    "dateOverride": "تجاوز التاريخ",
+    "dateHelp": "اضبط `fajr_dev_date` لتجاوز الوقت في التطبيق. امسح الحقل للإيقاف.",
+    "overrideLabel": "تاريخ التجاوز (YYYY-MM-DD)",
+    "overridePh": "2026-04-07",
+    "apply": "تطبيق",
+    "streakTesting": "اختبار السلسلة",
+    "streakHelp": "تؤثر على السجلات فقط (تُحفظ العادات والملف).",
+    "inject7": "حقن 7 أيام مكتملة (كل العادات)",
+    "injectMissed": "حقن أمس كفائت (كسر السلاسل)",
+    "clearLogs": "مسح كل السجلات",
+    "clearLogsTitle": "مسح السجلات؟",
+    "clearLogsMsg": "يمسح السجلات فقط ويُبقي العادات والملف.",
+    "clearLogsBtn": "مسح السجلات",
+    "invalidDate": "تاريخ غير صالح",
+    "invalidDateMsg": "استخدم YYYY-MM-DD.",
+    "injected": "تم الحقن",
+    "injected7": "أُضيفت 7 أيام مكتملة لكل العادات.",
+    "injectedMissed": "أُعلم أمس كفائت (كسر السلاسل)."
+  },
+  "ritual": {
+    "title": "اكتملت القائمة",
+    "sub": "الحمد لله"
+  },
+  "habitCard": {
+    "streak": "{{fire}}سلسلة {{count}} يوم",
+    "atRisk": " · معرّض"
+  },
+  "notifications": {
+    "reminderBody": "لا تنكسر سلسلتك — اضغط لتسجيل اليوم.",
+    "channelName": "تذكيرات فجر"
+  },
+  "dates": {
+    "hijri": "{{day}} {{month}} {{year}} {{ah}}",
+    "ah": "هـ"
+  },
+  "hijriMonths": {
+    "1": "محرم",
+    "2": "صفر",
+    "3": "ربيع الأول",
+    "4": "ربيع الآخر",
+    "5": "جمادى الأولى",
+    "6": "جمادى الآخرة",
+    "7": "رجب",
+    "8": "شعبان",
+    "9": "رمضان",
+    "10": "شوال",
+    "11": "ذو القعدة",
+    "12": "ذو الحجة"
+  },
+  "motivation": {
+    "0": {
+      "text": "أحب الأعمال إلى الله أدومها وإن قل",
+      "source": "حديث — البخاري ومسلم"
+    },
+    "1": {
+      "text": "لا يكلف الله نفساً إلا وسعها — خطوة بخطوة.",
+      "source": "قرآن — البقرة ٢٨٦"
+    },
+    "2": {
+      "text": "إن مع العسر يسراً.",
+      "source": "قرآن — الشرح ٥–٦"
+    },
+    "3": {
+      "text": "اعقلها وتوكل.",
+      "source": "حديث — الترمذي"
+    },
+    "4": {
+      "text": "المؤمن القوي خير وأحب إلى الله من المؤمن الضعيف.",
+      "source": "حديث — مسلم"
+    },
+    "5": {
+      "text": "اتق الله تجده أمامك.",
+      "source": "حديث — الترمذي"
+    },
+    "6": {
+      "text": "الدنيا سجن المؤمن وجنة الكافر.",
+      "source": "حديث — مسلم"
+    },
+    "7": {
+      "text": "من سلك طريقاً يلتمس فيه علماً سهل الله له طريقاً إلى الجنة.",
+      "source": "حديث — مسلم"
+    },
+    "8": {
+      "text": "لا تلزم قلبك ما يفنِ — ابنِ للدار الباقية.",
+      "source": "تذكير"
+    },
+    "9": {
+      "text": "إن الله مع الصابرين — واصل بإخلاص.",
+      "source": "قرآن — البقرة ١٥٣"
+    }
+  },
+  "devBanner": "وضع المطور — تجاوز التاريخ نشط ({{date}})"
+}
