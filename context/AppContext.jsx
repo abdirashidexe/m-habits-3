@@ -32,7 +32,7 @@ import {
  * @returns {import('./AppReducer').Habit}
  */
 function migrateHabitFromStorage(h) {
-  if (!h || typeof h !== 'object') return /** @type {import('./AppReducer').Habit} */ (h);
+  if (!h || typeof h !== 'object') return null;
   const out = { ...h };
   if ('isPremium' in out && !('isPlus' in out)) {
     out.isPlus = Boolean(out.isPremium);
@@ -121,8 +121,17 @@ export function AppProvider({ children }) {
         ]);
       if (cancelled) return;
       const userProfile = normalizeUserProfile(userProfileRaw);
-      const habitsNorm = Array.isArray(habits) ? habits.map(migrateHabitFromStorage) : [];
-      const devDateOverride = typeof devDateRaw === 'string' ? devDateRaw : null;
+      const habitsNorm = Array.isArray(habits)
+        ? habits
+            .map(migrateHabitFromStorage)
+            .filter((h) => h && typeof h.id === 'string')
+        : [];
+      const devDateRawStr = typeof devDateRaw === 'string' ? devDateRaw : null;
+      // Dev date override must never affect release builds (e.g. leftover AsyncStorage from dev).
+      const devDateOverride = __DEV__ ? devDateRawStr : null;
+      if (!__DEV__ && devDateRawStr) {
+        void storage.writeJson(storage.KEYS.devDate, null);
+      }
       setDevDateOverride(devDateOverride);
       dispatch({
         type: ActionTypes.HYDRATE,

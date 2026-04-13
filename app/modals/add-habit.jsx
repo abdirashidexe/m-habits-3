@@ -1,27 +1,27 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useApp, ActionTypes } from '../../context/AppContext';
 import { Button } from '../../components/Button';
-import { ThemedSwitch } from '../../components/ThemedSwitch';
-import { Input } from '../../components/Input';
 import { DayPicker } from '../../components/DayPicker';
+import { Input } from '../../components/Input';
+import { ThemedSwitch } from '../../components/ThemedSwitch';
+import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
-import { createUuid } from '../../utils/uuid';
-import { scheduleHabitReminder, cancelHabitReminder } from '../../utils/notifications';
+import { cancelHabitReminder, scheduleHabitReminder } from '../../utils/notifications';
 import { nowIso } from '../../utils/now';
+import { createUuid } from '../../utils/uuid';
 
 export default function AddHabitModal() {
   const { t } = useTranslation();
@@ -59,8 +59,16 @@ export default function AddHabitModal() {
     }
   }, [existing]);
 
-  const customCount = state.habits.filter((h) => h.type === 'custom').length;
+  const customHabits = useMemo(() => state.habits, [state.habits]);
+  const customCount = customHabits.length;
   const plus = state.userProfile.isPlus;
+
+  useEffect(() => {
+    if (existing) return;
+    if (!plus && customCount >= 3) {
+      router.replace('/modals/paywall');
+    }
+  }, [existing, plus, customCount, router]);
 
   const close = () => router.back();
 

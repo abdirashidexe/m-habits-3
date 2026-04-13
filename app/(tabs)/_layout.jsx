@@ -4,13 +4,7 @@ import { Easing, Platform, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useFajrTheme } from '../../hooks/useFajrTheme';
-// import { FaHouse, FaChartSimple, FaUser, FaRocket } from "react-icons/fa6";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-
-// Usage
-{/* <FontAwesome6 name="chart-simple" size={24} color="black" />
-<FontAwesome6 name="user" size={24} color="black" />
-<FontAwesome6 name="rocket" size={24} color="black" /> */}
 
 export default function TabsLayout() {
   const { t } = useTranslation();

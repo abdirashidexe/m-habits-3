@@ -7,32 +7,37 @@ export const lightColors = {
   background: '#F5F0E8',
   surface: '#EDE8DC',
   surfaceElevated: '#E8E0D0',
-  primary: '#5C7A5F',
-  primaryLight: '#7A9E7E',
+  /** Default brand olive — strong on warm paper, pairs with existing accent gold */
+  primary: '#606c38',
+  /** Lighter olive for secondary emphasis / large fills without heavy contrast */
+  primaryLight: '#7a8552',
   accent: '#C4954A',
   textPrimary: '#2C2C2C',
   textSecondary: '#7A7060',
   textMuted: '#B0A898',
   divider: '#D8D0C0',
-  success: '#5C7A5F',
-  danger: '#C4614A',
+  success: '#606c38',
+  danger: '#a62121',
   plusGold: '#C4954A',
 };
 
 export const darkColors = {
-  overlay: 'rgba(0, 0, 0, 0.45)',
+  /** Slightly olive-tinted scrim over the deep canvas */
+  overlay: 'rgba(20, 28, 18, 0.55)',
+  /** Deep forest olive canvas — same family as light primary, anchored to #283618 */
   background: '#12110F',
   surface: '#1A1815',
   surfaceElevated: '#211E1A',
-  primary: '#7A9E7E',
-  primaryLight: '#9BBDA0',
+  /** Lifted sage for controls on dark olive (readable vs #283618 / surfaces) */
+  primary: '#a3b06e',
+  primaryLight: '#b8c489',
   accent: '#D2A35A',
-  textPrimary: '#F0EAE0',
-  textSecondary: '#BEB4A4',
-  textMuted: '#8E867A',
-  divider: '#2C2823',
-  success: '#7A9E7E',
-  danger: '#D06B55',
+  textPrimary: '#EEF1E6',
+  textSecondary: '#C5CBB8',
+  textMuted: '#8E9580',
+  divider: '#3d4a34',
+  success: '#a3b06e',
+  danger: '#b03333',
   plusGold: '#D2A35A',
 };
 

@@ -3,19 +3,18 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
-  Animated,
-  Easing,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    Animated,
+    Easing,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EmptyState } from '../../components/EmptyState';
-import { PlusBadge } from '../../components/PlusBadge';
+import { ThemedMessageModal } from '../../components/ThemedMessageModal';
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { cancelHabitReminder } from '../../utils/notifications';
@@ -23,6 +22,7 @@ import { now } from '../../utils/now';
 import { calculateStreak } from '../../utils/streak';
 
 export default function HabitsScreen() {
+  const MAX_FREE_HABITS = 3;
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -31,6 +31,7 @@ export default function HabitsScreen() {
   const styles = makeStyles({ colors, spacing, radii });
   const plus = state.userProfile.isPlus;
   const [reorderMode, setReorderMode] = React.useState(false);
+  const [dialog, setDialog] = React.useState(null);
   const glowPulse = useRef(new Animated.Value(0)).current;
   const glowOpacity = useMemo(
     () => glowPulse.interpolate({ inputRange: [0, 1], outputRange: [0.32, 0.78] }),
@@ -42,7 +43,7 @@ export default function HabitsScreen() {
   );
 
   const customHabits = useMemo(
-    () => state.habits.filter((h) => h.type === 'custom'),
+    () => state.habits,
     [state.habits]
   );
 
@@ -83,25 +84,29 @@ export default function HabitsScreen() {
   };
 
   const openAdd = () => {
-    if (!plus && customHabits.length >= 3) {
-      Alert.alert(t('habits.plusTitle'), t('habits.plusLimitBody'), [{ text: t('common.ok') }]);
+    if (!plus && customHabits.length >= MAX_FREE_HABITS) {
+      router.push('/modals/paywall');
       return;
     }
     router.push('/modals/add-habit');
   };
 
   const confirmDelete = (h) => {
-    Alert.alert(t('habits.deleteTitle'), t('habits.deleteMsg', { name: h.name }), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('common.delete'),
-        style: 'destructive',
-        onPress: async () => {
-          await cancelHabitReminder(h.id);
-          dispatch({ type: ActionTypes.DELETE_HABIT, payload: h.id });
+    setDialog({
+      title: t('habits.deleteTitle'),
+      message: t('habits.deleteMsg', { name: h.name }),
+      actions: [
+        { label: t('common.cancel'), variant: 'secondary' },
+        {
+          label: t('common.delete'),
+          variant: 'primary',
+          onPress: async () => {
+            await cancelHabitReminder(h.id);
+            dispatch({ type: ActionTypes.DELETE_HABIT, payload: h.id });
+          },
         },
-      },
-    ]);
+      ],
+    });
   };
 
   const openEdit = (h, locked) => {
@@ -139,6 +144,7 @@ export default function HabitsScreen() {
   }, [customHabits.length, glowPulse]);
 
   return (
+    <>
     <View style={[styles.screen, { paddingTop: insets.top + spacing.md }]}>
       <View style={styles.headerRow}>
         <View style={styles.headerTitleArea}>
@@ -173,7 +179,7 @@ export default function HabitsScreen() {
         ) : null}
 
         {customHabits.map((h, index) => {
-            const locked = !plus && index >= 3;
+            const locked = !plus && index >= MAX_FREE_HABITS;
             const streak = calculateStreak(h.id, state.habitLogs, h, now());
             const RowWrap = locked ? Pressable : View;
             const rowWrapProps = locked
@@ -188,14 +194,17 @@ export default function HabitsScreen() {
                 <View style={styles.rowMain}>
                   <View style={styles.rowTop}>
                     <Text style={[typography.subheading, styles.name]}>{h.name}</Text>
-                    {locked ? <PlusBadge compact /> : null}
                   </View>
                   <Text style={[typography.caption, styles.meta]}>{freqLabel(h)}</Text>
                   <Text style={[typography.caption, styles.streak]}>
                     {t('habits.streak', { count: streak.currentStreak })}
                   </Text>
                 </View>
-                {!locked ? (
+                {locked ? (
+                  <View style={styles.fajrPlusBadgeWrap} accessibilityElementsHidden>
+                    <Text style={[typography.caption, styles.fajrPlusBadge]}>{t('habits.fajrPlusShort')}</Text>
+                  </View>
+                ) : (
                   <View style={styles.actions}>
                     {reorderMode ? (
                       <View style={styles.reorderArrows}>
@@ -242,8 +251,6 @@ export default function HabitsScreen() {
                       />
                     </Pressable>
                   </View>
-                ) : (
-                  <Text style={[typography.caption, styles.lock]}>🔒</Text>
                 )}
               </RowWrap>
             );
@@ -266,6 +273,8 @@ export default function HabitsScreen() {
         </Pressable>
       </View>
     </View>
+    <ThemedMessageModal dialog={dialog} onDismiss={() => setDialog(null)} />
+    </>
   );
 }
 
@@ -363,8 +372,17 @@ function makeStyles({ colors, spacing, radii }) {
     alignItems: 'center',
   },
   rowLocked: {
-    borderColor: colors.plusGold,
-    opacity: 0.85,
+    opacity: 0.5,
+  },
+  fajrPlusBadgeWrap: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+    paddingLeft: spacing.sm,
+  },
+  fajrPlusBadge: {
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    color: colors.accent,
   },
   rowMain: {
     flex: 1,
@@ -407,10 +425,6 @@ function makeStyles({ colors, spacing, radii }) {
   },
   iconBtn: {
     padding: spacing.sm,
-  },
-  lock: {
-    color: colors.plusGold,
-    fontSize: 22,
   },
   fab: {
     zIndex: 1,

@@ -2,11 +2,16 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useFocusEffect } from '@react-navigation/native';
 import {
   addDays,
+  addMonths,
+  endOfMonth,
+  format,
+  getDay,
   isAfter,
   isBefore,
   isSameDay,
   startOfDay,
-  startOfWeek
+  startOfMonth,
+  startOfWeek,
 } from 'date-fns';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -15,21 +20,142 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PlusBadge } from '../../components/PlusBadge';
-import { useApp } from '../../context/AppContext';
+import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { toLocalDateString } from '../../utils/dates';
-import { now } from '../../utils/now';
+import { now, nowIso } from '../../utils/now';
 import { isHabitDueOnDate, longestStreakEverForHabit } from '../../utils/streak';
+
+const DEV_DAY_MIN = startOfDay(new Date(2024, 0, 1));
+const DEV_DAY_MAX = startOfDay(new Date(2027, 0, 31));
+const DEV_MONTH_MIN = startOfMonth(DEV_DAY_MIN);
+const DEV_MONTH_MAX = startOfMonth(DEV_DAY_MAX);
+
+/**
+ * @param {'complete' | 'missed' | 'clear'} action
+ * @param {Date} d0
+ */
+function runDevDayAction(action, d0, state, dispatch) {
+  if (isBefore(d0, DEV_DAY_MIN) || isAfter(d0, DEV_DAY_MAX)) return;
+  const ds = toLocalDateString(d0);
+  const customs = state.habits.filter((h) => h.type === 'custom');
+
+  if (action === 'clear') {
+    dispatch({
+      type: ActionTypes.SET_HABIT_LOGS,
+      payload: state.habitLogs.filter((l) => l.date !== ds),
+    });
+    return;
+  }
+
+  const habitLogs = [...state.habitLogs];
+  const indexByKey = new Map(habitLogs.map((l, i) => [`${l.habitId}_${l.date}`, i]));
+
+  if (action === 'complete') {
+    const iso = nowIso();
+    for (const h of customs) {
+      if (!isHabitDueOnDate(h, d0)) continue;
+      const key = `${h.id}_${ds}`;
+      const i = indexByKey.get(key);
+      if (i !== undefined) {
+        habitLogs[i] = { ...habitLogs[i], completed: true, completedAt: iso };
+      } else {
+        habitLogs.push({ habitId: h.id, date: ds, completed: true, completedAt: iso });
+        indexByKey.set(key, habitLogs.length - 1);
+      }
+    }
+    dispatch({ type: ActionTypes.SET_HABIT_LOGS, payload: habitLogs });
+    return;
+  }
+
+  if (action === 'missed') {
+    for (const h of customs) {
+      if (!isHabitDueOnDate(h, d0)) continue;
+      const key = `${h.id}_${ds}`;
+      const i = indexByKey.get(key);
+      if (i !== undefined) {
+        habitLogs[i] = { ...habitLogs[i], completed: false, completedAt: null };
+      } else {
+        habitLogs.push({ habitId: h.id, date: ds, completed: false, completedAt: null });
+      }
+    }
+    dispatch({ type: ActionTypes.SET_HABIT_LOGS, payload: habitLogs });
+  }
+}
+
+/**
+ * @param {Date} day
+ * @param {import('../../context/AppReducer').AppState} state
+ * @returns {'nodue' | 'neutral' | 'complete' | 'missed' | 'mixed'}
+ */
+function getDayTapPhase(day, state) {
+  const d0 = startOfDay(day);
+  const ds = toLocalDateString(d0);
+  const customs = state.habits.filter((h) => h.type === 'custom' && isHabitDueOnDate(h, d0));
+  if (customs.length === 0) return 'nodue';
+
+  let anyLog = false;
+  let allTrue = true;
+  let allFalse = true;
+  for (const h of customs) {
+    const log = state.habitLogs.find((l) => l.habitId === h.id && l.date === ds);
+    if (!log) {
+      allTrue = false;
+      allFalse = false;
+      continue;
+    }
+    anyLog = true;
+    if (log.completed) allFalse = false;
+    else allTrue = false;
+  }
+
+  if (!anyLog) return 'neutral';
+  if (allTrue) return 'complete';
+  if (allFalse) return 'missed';
+  return 'mixed';
+}
+
+/**
+ * @returns {{ id: string, mode: 'injected' | 'missedExplicit' | 'pending' | 'future' | 'missed' }[]}
+ */
+function devCalendarDotsForDay(day, customHabits, habitLogs, today) {
+  const dateStr = toLocalDateString(day);
+  const isTodayCol = isSameDay(day, today);
+  const d0 = startOfDay(day);
+  const today0 = startOfDay(today);
+  const isPast = isBefore(d0, today0);
+  const isFuture = isAfter(d0, today0);
+  const dots = [];
+  for (const h of customHabits) {
+    if (!isHabitDueOnDate(h, day)) continue;
+    const log = habitLogs.find((l) => l.habitId === h.id && l.date === dateStr);
+    if (log?.completed === true) {
+      dots.push({ id: h.id, mode: 'injected' });
+      continue;
+    }
+    if (log && log.completed === false) {
+      dots.push({ id: h.id, mode: 'missedExplicit' });
+      continue;
+    }
+    let fill = 'missed';
+    if (isTodayCol) fill = 'pending';
+    else if (isFuture) fill = 'future';
+    else if (isPast) fill = 'missed';
+    dots.push({ id: h.id, mode: fill });
+  }
+  return dots;
+}
 
 export default function StatsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const { colors, radii, shadows, spacing, typography } = useFajrTheme();
   const styles = makeStyles({ colors, radii, spacing });
   const plus = state.userProfile.isPlus;
   const [today, setToday] = useState(() => now());
+  const [devCalendarMonth, setDevCalendarMonth] = useState(() => startOfMonth(now()));
   useFocusEffect(
     useCallback(() => {
       setToday(now());
@@ -89,6 +215,39 @@ export default function StatsScreen() {
       return { day, dateStr, isTodayCol, dots };
     });
   }, [weekDays, customHabits, state.habitLogs, today]);
+
+  const devCalendarRows = useMemo(() => {
+    const monthStart = startOfMonth(devCalendarMonth);
+    const last = endOfMonth(monthStart);
+    const pad = getDay(monthStart);
+    const totalDays = last.getDate();
+    const cells = /** @type {(Date | null)[]} */ ([]);
+    for (let i = 0; i < pad; i++) cells.push(null);
+    for (let d = 1; d <= totalDays; d++) {
+      cells.push(startOfDay(addDays(monthStart, d - 1)));
+    }
+    while (cells.length % 7 !== 0) cells.push(null);
+    const rows = [];
+    for (let i = 0; i < cells.length; i += 7) rows.push(cells.slice(i, i + 7));
+    return rows;
+  }, [devCalendarMonth]);
+
+  const canPrevDevMonth = isAfter(startOfMonth(devCalendarMonth), DEV_MONTH_MIN);
+  const canNextDevMonth = isBefore(startOfMonth(devCalendarMonth), DEV_MONTH_MAX);
+
+  const onDevCalendarDayPress = useCallback(
+    (day) => {
+      if (!__DEV__ || !state.devUiModeActive) return;
+      const d0 = startOfDay(day);
+      if (isBefore(d0, DEV_DAY_MIN) || isAfter(d0, DEV_DAY_MAX)) return;
+      const phase = getDayTapPhase(day, state);
+      if (phase === 'nodue') return;
+      if (phase === 'complete') runDevDayAction('missed', d0, state, dispatch);
+      else if (phase === 'missed') runDevDayAction('clear', d0, state, dispatch);
+      else runDevDayAction('complete', d0, state, dispatch);
+    },
+    [dispatch, state]
+  );
 
   const medalIcons = /** @type {{ name: any, color: string }[]} */ ([
     { name: 'trophy', color: colors.plusGold },
@@ -184,6 +343,94 @@ export default function StatsScreen() {
           </Pressable>
         ) : null}
       </View>
+
+      {__DEV__ && state.devUiModeActive ? (
+        <>
+          <View style={styles.sectionSpacer} />
+          <Text style={[typography.heading, styles.section]}>{t('devTools.calendarTitle')}</Text>
+          <Text style={[typography.caption, styles.devCalHint]}>{t('devTools.calendarHint')}</Text>
+          <View style={[styles.card, shadows.card]}>
+            <View style={styles.calNav}>
+              <Pressable
+                disabled={!canPrevDevMonth}
+                onPress={() => setDevCalendarMonth((m) => addMonths(m, -1))}
+                style={({ pressed }) => [
+                  styles.calNavBtn,
+                  !canPrevDevMonth && styles.calNavDisabled,
+                  pressed && canPrevDevMonth && styles.calNavBtnPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('devTools.prevMonthA11y')}
+              >
+                <Text style={[typography.heading, styles.calNavChev]}>‹</Text>
+              </Pressable>
+              <Text style={[typography.subheading, styles.calNavTitle]}>
+                {format(devCalendarMonth, 'MMMM yyyy')}
+              </Text>
+              <Pressable
+                disabled={!canNextDevMonth}
+                onPress={() => setDevCalendarMonth((m) => addMonths(m, 1))}
+                style={({ pressed }) => [
+                  styles.calNavBtn,
+                  !canNextDevMonth && styles.calNavDisabled,
+                  pressed && canNextDevMonth && styles.calNavBtnPressed,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={t('devTools.nextMonthA11y')}
+              >
+                <Text style={[typography.heading, styles.calNavChev]}>›</Text>
+              </Pressable>
+            </View>
+            <View style={styles.calWeekHdr}>
+              {dayLetters.map((letter, i) => (
+                <Text key={`cal-dow-${i}`} style={[typography.label, styles.calWeekLbl]}>
+                  {letter}
+                </Text>
+              ))}
+            </View>
+            {devCalendarRows.map((row, ri) => (
+              <View key={ri} style={styles.calRow}>
+                {row.map((cell, ci) => {
+                  if (!cell) return <View key={ci} style={styles.calCellEmpty} />;
+                  const cellDots = devCalendarDotsForDay(cell, customHabits, state.habitLogs, today);
+                  return (
+                    <Pressable
+                      key={ci}
+                      onPress={() => onDevCalendarDayPress(cell)}
+                      style={({ pressed }) => [
+                        styles.calCell,
+                        isSameDay(cell, today) && styles.calCellToday,
+                        pressed && styles.calCellPressed,
+                      ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={format(cell, 'yyyy-MM-dd')}
+                    >
+                      <Text style={[typography.label, styles.calDayNum]}>{format(cell, 'd')}</Text>
+                      <View style={styles.calDotCol}>
+                        {cellDots.map((d) => (
+                          <View
+                            key={d.id}
+                            style={[
+                              styles.calDot,
+                              d.mode === 'injected' && styles.calDotGreen,
+                              d.mode === 'missedExplicit' && styles.calDotYellow,
+                              d.mode === 'pending' && styles.dotHalf,
+                              d.mode === 'future' && styles.dotFuture,
+                            ]}
+                          />
+                        ))}
+                        {cellDots.length === 0 ? (
+                          <Text style={[typography.caption, styles.calNoDots]}>—</Text>
+                        ) : null}
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        </>
+      ) : null}
 
       <View style={{ height: spacing.xxl }} />
     </ScrollView>
@@ -346,6 +593,105 @@ function makeStyles({ colors, radii, spacing }) {
       color: colors.background,
       fontWeight: '600',
       textAlign: 'center',
+    },
+    devCalHint: {
+      color: colors.textMuted,
+      marginBottom: spacing.sm,
+      lineHeight: 18,
+    },
+    calNav: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: spacing.md,
+    },
+    calNavBtn: {
+      width: 40,
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    calNavDisabled: {
+      opacity: 0.35,
+    },
+    calNavBtnPressed: {
+      opacity: 0.75,
+    },
+    calNavChev: {
+      color: colors.textPrimary,
+      lineHeight: 32,
+    },
+    calNavTitle: {
+      color: colors.textPrimary,
+      flex: 1,
+      textAlign: 'center',
+    },
+    calWeekHdr: {
+      flexDirection: 'row',
+      marginBottom: spacing.xs,
+    },
+    calWeekLbl: {
+      flex: 1,
+      textAlign: 'center',
+      color: colors.textMuted,
+    },
+    calRow: {
+      flexDirection: 'row',
+      marginBottom: 4,
+    },
+    calCell: {
+      flex: 1,
+      minHeight: 52,
+      marginHorizontal: 2,
+      paddingVertical: 4,
+      paddingHorizontal: 2,
+      borderRadius: radii.md,
+      borderWidth: 1,
+      borderColor: colors.divider,
+      backgroundColor: colors.background,
+      alignItems: 'center',
+    },
+    calCellToday: {
+      borderColor: colors.primary,
+      borderWidth: 2,
+    },
+    calCellPressed: {
+      opacity: 0.88,
+    },
+    calCellEmpty: {
+      flex: 1,
+      marginHorizontal: 2,
+      minHeight: 52,
+    },
+    calDayNum: {
+      color: colors.textPrimary,
+      marginBottom: 2,
+    },
+    calDotCol: {
+      alignItems: 'center',
+      gap: 2,
+      minHeight: 28,
+      justifyContent: 'center',
+    },
+    calDot: {
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      borderWidth: 1,
+      borderColor: colors.divider,
+      backgroundColor: colors.background,
+    },
+    calNoDots: {
+      color: colors.textMuted,
+      fontSize: 10,
+    },
+    calDotGreen: {
+      backgroundColor: '#22c55e',
+      borderColor: '#16a34a',
+    },
+    calDotYellow: {
+      backgroundColor: '#eab308',
+      borderColor: '#ca8a04',
     },
   });
 }

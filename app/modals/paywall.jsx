@@ -1,159 +1,329 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Purchases from 'react-native-purchases';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '../../components/Button';
+import { HabitCompletionRitual } from '../../components/HabitCompletionRitual';
+import { ThemedMessageModal } from '../../components/ThemedMessageModal';
+import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
+import { checkPlusEntitlement, restorePurchases as restorePurchasesRc } from '../../utils/purchases';
 
-const PLANS = [
-  { id: 'monthly', title: 'Monthly', price: '$3.99 / month', pill: null, pillTone: null },
-  { id: 'annual', title: 'Annual', price: '$29.99 / year', pill: 'Best value', pillTone: 'gold' },
-  { id: 'lifetime', title: 'Lifetime', price: '$59.99 one time', pill: 'Own it forever', pillTone: 'sage' },
+const PLAN_DEFS = [
+  {
+    id: 'monthly',
+    titleKey: 'paywall.planMonthly',
+    priceKey: 'paywall.priceMonthly',
+    priceSuffixKey: 'paywall.priceSuffixMonthly',
+    pillKey: null,
+    pillTone: null,
+  },
+  {
+    id: 'annual',
+    titleKey: 'paywall.planAnnual',
+    priceKey: 'paywall.priceAnnual',
+    priceSuffixKey: 'paywall.priceSuffixAnnual',
+    pillKey: 'paywall.pillBestValue',
+    pillTone: 'gold',
+  },
+  {
+    id: 'lifetime',
+    titleKey: 'paywall.planLifetime',
+    priceKey: 'paywall.priceLifetime',
+    priceSuffixKey: 'paywall.priceSuffixLifetime',
+    pillKey: 'paywall.pillOwnForever',
+    pillTone: 'sage',
+  },
 ];
 
-const BENEFITS = [
-  'Unlimited custom habits',
-  'Full stats history — 30-day & all-time',
-  'Streak protection (coming soon)',
-  'Custom themes (coming soon)',
-];
+const BENEFIT_KEYS = ['paywall.benefit1', 'paywall.benefit2', 'paywall.benefit3', 'paywall.benefit4'];
+
+function isPurchaseCancelled(error) {
+  if (!error) return false;
+  if (error.code === Purchases.PURCHASES_ERROR_CODE.PURCHASE_CANCELLED_ERROR) return true;
+  if (error.userInfo?.readableErrorCode === 'PURCHASE_CANCELLED') return true;
+  return false;
+}
 
 export default function PaywallModal() {
+  const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { dispatch } = useApp();
   const { colors, typography, spacing, radii } = useFajrTheme();
   const styles = makeStyles({ colors, spacing, radii });
 
+  const plans = useMemo(
+    () =>
+      PLAN_DEFS.map((def) => ({
+        ...def,
+        title: t(def.titleKey),
+        price: t(def.priceKey),
+        priceSuffix: t(def.priceSuffixKey),
+        pill: def.pillKey ? t(def.pillKey) : null,
+      })),
+    [t]
+  );
+
+  const benefits = useMemo(() => BENEFIT_KEYS.map((key) => t(key)), [t]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('annual');
+  const [packages, setPackages] = useState({
+    monthly: null,
+    annual: null,
+    lifetime: null,
+  });
+  const [dialog, setDialog] = useState(null);
+  const [purchaseRitualOn, setPurchaseRitualOn] = useState(false);
+  const [offeringsReady, setOfferingsReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const offerings = await Purchases.getOfferings();
+        const current = offerings.current;
+        if (current && !cancelled) {
+          const PT = Purchases.PACKAGE_TYPE;
+          let monthly = null;
+          let annual = null;
+          let lifetime = null;
+          for (const pkg of current.availablePackages) {
+            if (pkg.packageType === PT.MONTHLY) monthly = pkg;
+            else if (pkg.packageType === PT.ANNUAL) annual = pkg;
+            else if (pkg.packageType === PT.LIFETIME) lifetime = pkg;
+          }
+          setPackages({ monthly, annual, lifetime });
+        }
+      } catch (e) {
+        if (__DEV__) {
+          console.warn('[Paywall] getOfferings failed', e?.message ?? e);
+        }
+      } finally {
+        if (!cancelled) setOfferingsReady(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const getPackageForPlanId = useCallback(
+    (id) => {
+      if (id === 'monthly') return packages.monthly;
+      if (id === 'annual') return packages.annual;
+      if (id === 'lifetime') return packages.lifetime;
+      return null;
+    },
+    [packages.monthly, packages.annual, packages.lifetime]
+  );
 
   const close = () => router.back();
 
-  const onStartPlus = () => {
+  const onStartPlus = async () => {
     if (isLoading) return;
-    const plan = selectedPlan;
+    const selectedPackage = getPackageForPlanId(selectedPlan);
+    if (!selectedPackage) {
+      setDialog({
+        title: t('paywall.unavailableTitle'),
+        message: t('paywall.unavailableMsg'),
+        actions: [{ label: t('common.ok') }],
+      });
+      return;
+    }
     setIsLoading(true);
-    setTimeout(() => {
-      console.log('purchase triggered:', plan);
+    try {
+      await Purchases.purchasePackage(selectedPackage);
+    } catch (e) {
+      if (isPurchaseCancelled(e)) {
+        setIsLoading(false);
+        return;
+      }
       setIsLoading(false);
-    }, 1500);
+      setDialog({
+        title: t('paywall.purchaseFailedTitle'),
+        message: e?.message || t('paywall.purchaseFailedMsg'),
+        actions: [{ label: t('common.ok') }],
+      });
+      return;
+    }
+    const entitled = await checkPlusEntitlement();
+    setIsLoading(false);
+    if (entitled) {
+      dispatch({ type: ActionTypes.SET_PLUS, payload: true });
+      setPurchaseRitualOn(true);
+    } else {
+      setDialog({
+        title: t('paywall.pendingTitle'),
+        message: t('paywall.pendingMsg'),
+        actions: [{ label: t('common.ok') }],
+      });
+    }
   };
 
-  const onRestore = () => {
-    console.log('restore triggered');
+  const onRestore = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      const ok = await restorePurchasesRc();
+      if (ok) {
+        dispatch({ type: ActionTypes.SET_PLUS, payload: true });
+        setDialog({
+          title: t('paywall.restoredTitle'),
+          message: t('paywall.restoredMsg'),
+          actions: [{ label: t('common.ok') }],
+        });
+      } else {
+        setDialog({
+          title: t('paywall.restoreNoneTitle'),
+          message: t('paywall.restoreNoneMsg'),
+          actions: [{ label: t('common.ok') }],
+        });
+      }
+    } catch (e) {
+      if (__DEV__) {
+        console.warn('[Paywall] onRestore', e);
+      }
+      setDialog({
+        title: t('paywall.restoreFailedTitle'),
+        message: e?.message || t('paywall.restoreFailedMsg'),
+        actions: [{ label: t('common.ok') }],
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      <View style={[styles.topRow, { paddingTop: insets.top + spacing.sm }]}>
-        <View style={styles.topSpacer} />
-        <View style={styles.badgeWrap}>
-          <Text style={[typography.label, styles.badge]}>✦ Fajr+</Text>
-        </View>
-        <View style={styles.topSpacer}>
-          <Pressable
-            onPress={close}
-            hitSlop={12}
-            style={styles.closeBtn}
-            accessibilityRole="button"
-            accessibilityLabel="Close"
-          >
-            <Text style={[typography.heading, styles.closeTxt]}>×</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: Math.max(insets.bottom, spacing.lg) + spacing.md },
-        ]}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={[typography.displayLarge, styles.heading]}>Invest in your deen.</Text>
-        <Text style={[typography.body, styles.subheading]}>
-          Your subscription is{'\n'}sadaqah jaariyah.
-        </Text>
-
-        <View style={styles.charityCard}>
-          <Text style={[typography.body, styles.charityTxt]}>
-            50% of every Fajr+ subscription goes to{'\n'}
-            <Text style={styles.charityEm}>[CHARITY PLACEHOLDER]</Text>
-            {' — may Allah accept it from you and us.'}
-          </Text>
-        </View>
-
-        <View style={styles.benefits}>
-          {BENEFITS.map((line) => (
-            <View key={line} style={styles.benefitRow}>
-              <Text style={[typography.body, styles.check]}>✓</Text>
-              <Text style={[typography.body, styles.benefitTxt]}>{line}</Text>
-            </View>
-          ))}
-        </View>
-
-        {PLANS.map((plan) => {
-          const selected = selectedPlan === plan.id;
-          return (
+    <>
+      <View style={[styles.screen, { backgroundColor: colors.background }]}>
+        <View style={[styles.topRow, { paddingTop: insets.top + spacing.sm }]}>
+          <View style={styles.topSpacer} />
+          <View style={styles.badgeWrap}>
+            <Text style={[typography.label, styles.badge]}>{t('paywall.badge')}</Text>
+          </View>
+          <View style={styles.topSpacer}>
             <Pressable
-              key={plan.id}
-              onPress={() => setSelectedPlan(plan.id)}
-              style={[
-                styles.planCard,
-                selected ? { borderColor: colors.accent } : { borderColor: colors.divider },
-              ]}
+              onPress={close}
+              hitSlop={12}
+              style={styles.closeBtn}
               accessibilityRole="button"
-              accessibilityState={{ selected }}
+              accessibilityLabel={t('paywall.a11yClose')}
             >
-              <View style={styles.planTop}>
-                <Text style={[typography.subheading, styles.planTitle]}>{plan.title}</Text>
-                {plan.pill ? (
-                  <View
-                    style={[
-                      styles.pill,
-                      plan.pillTone === 'gold' && { backgroundColor: colors.plusGold + '33', borderColor: colors.plusGold },
-                      plan.pillTone === 'sage' && {
-                        backgroundColor: colors.primary + '22',
-                        borderColor: colors.primary,
-                      },
-                    ]}
-                  >
-                    <Text
+              <Text style={[typography.heading, styles.closeTxt]}>×</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: Math.max(insets.bottom, spacing.lg) + spacing.md },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={[typography.displayLarge, styles.heading]}>{t('paywall.heading')}</Text>
+          <Text style={[typography.body, styles.subheading]}>{t('paywall.subheading')}</Text>
+
+          <View style={styles.charityCard}>
+            <Text style={[typography.body, styles.charityTxt]}>
+              {t('paywall.charityIntro')}
+              {'\n'}
+              <Text style={styles.charityEm}>{t('paywall.charityName')}</Text>
+              {t('paywall.charityOutro')}
+            </Text>
+          </View>
+
+          <View style={styles.benefits}>
+            {benefits.map((line, index) => (
+              <View key={`paywall-benefit-${index}`} style={styles.benefitRow}>
+                <Text style={[typography.body, styles.check]}>✓</Text>
+                <Text style={[typography.body, styles.benefitTxt]}>{line}</Text>
+              </View>
+            ))}
+          </View>
+
+          {plans.map((plan) => {
+            const selected = selectedPlan === plan.id;
+            const pkg = getPackageForPlanId(plan.id);
+            const storePrice = pkg?.product?.priceString;
+            const priceLabel = storePrice
+              ? `${storePrice}${plan.priceSuffix}`
+              : offeringsReady
+                ? plan.price
+                : '\u2007';
+            return (
+              <Pressable
+                key={plan.id}
+                onPress={() => setSelectedPlan(plan.id)}
+                style={[
+                  styles.planCard,
+                  selected ? { borderColor: colors.accent } : { borderColor: colors.divider },
+                ]}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+              >
+                <View style={styles.planTop}>
+                  <Text style={[typography.subheading, styles.planTitle]}>{plan.title}</Text>
+                  {plan.pill ? (
+                    <View
                       style={[
-                        typography.caption,
-                        styles.pillTxt,
-                        plan.pillTone === 'gold' && { color: colors.plusGold },
-                        plan.pillTone === 'sage' && { color: colors.primary, fontWeight: '700' },
+                        styles.pill,
+                        plan.pillTone === 'gold' && {
+                          backgroundColor: colors.plusGold + '33',
+                          borderColor: colors.plusGold,
+                        },
+                        plan.pillTone === 'sage' && {
+                          backgroundColor: colors.primary + '22',
+                          borderColor: colors.primary,
+                        },
                       ]}
                     >
-                      {plan.pill}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-              <Text style={[typography.body, styles.planPrice]}>{plan.price}</Text>
-            </Pressable>
-          );
-        })}
+                      <Text
+                        style={[
+                          typography.caption,
+                          styles.pillTxt,
+                          plan.pillTone === 'gold' && { color: colors.plusGold },
+                          plan.pillTone === 'sage' && { color: colors.primary, fontWeight: '700' },
+                        ]}
+                      >
+                        {plan.pill}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
+                <Text style={[typography.body, styles.planPrice]}>{priceLabel}</Text>
+              </Pressable>
+            );
+          })}
 
-        <Button
-          title="Start Fajr+"
-          loading={isLoading}
-          onPress={onStartPlus}
-          style={styles.cta}
-        />
+          <Button title={t('paywall.cta')} loading={isLoading} onPress={onStartPlus} style={styles.cta} />
 
-        <Pressable onPress={onRestore} style={styles.restoreWrap} hitSlop={8}>
-          <Text style={[typography.caption, styles.restoreTxt]}>Restore purchases</Text>
-        </Pressable>
+          <Pressable onPress={onRestore} style={styles.restoreWrap} hitSlop={8} disabled={isLoading}>
+            <Text style={[typography.caption, styles.restoreTxt]}>{t('paywall.restore')}</Text>
+          </Pressable>
 
-        <Text style={[typography.caption, styles.legal]}>
-          Subscriptions renew automatically. Cancel anytime in your device settings. Lifetime purchase is a
-          one-time non-consumable.
-        </Text>
-      </ScrollView>
-    </View>
+          <Text style={[typography.caption, styles.legal]}>{t('paywall.legal')}</Text>
+        </ScrollView>
+      </View>
+      <HabitCompletionRitual
+        visible={purchaseRitualOn}
+        showHeadline={false}
+        onFinished={() => {
+          setPurchaseRitualOn(false);
+          setDialog({
+            title: t('paywall.welcomeTitle'),
+            message: t('paywall.welcomeMsg'),
+            actions: [{ label: t('common.ok'), onPress: () => router.back() }],
+          });
+        }}
+      />
+      <ThemedMessageModal dialog={dialog} onDismiss={() => setDialog(null)} />
+    </>
   );
 }
 

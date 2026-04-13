@@ -4,9 +4,9 @@ import { useRouter } from 'expo-router';
 import React, { useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
   Animated,
   Easing,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,7 +18,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
+import { DevToolsSection } from '../../components/DevToolsSection';
 import { PlusBadge } from '../../components/PlusBadge';
+import { ThemedMessageModal } from '../../components/ThemedMessageModal';
 import { ThemedSwitch } from '../../components/ThemedSwitch';
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
@@ -36,9 +38,8 @@ export default function ProfileScreen() {
   const styles = makeStyles({ colors, radii, spacing });
   const [editingName, setEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState(state.userProfile.name);
+  const [dialog, setDialog] = useState(null);
   const nameOpacity = useRef(new Animated.Value(1)).current;
-  const tapCount = useRef(0);
-  const tapTimer = useRef(null);
 
   const nameFadeMs = 150;
   const nameFadeEasing = Easing.in(Easing.linear);
@@ -104,59 +105,54 @@ export default function ProfileScreen() {
 
   const initial = (state.userProfile.name || '?').trim().charAt(0).toUpperCase();
 
-  const onVersionPress = () => {
-    tapCount.current += 1;
-    if (tapTimer.current) clearTimeout(tapTimer.current);
-    tapTimer.current = setTimeout(() => {
-      tapCount.current = 0;
-    }, 900);
-    if (tapCount.current >= 7) {
-      tapCount.current = 0;
-      router.push('/modals/dev-tools');
-    }
-  };
-
   const unlockPlus = () => {
     router.push('/modals/paywall');
   };
 
   const reminderDefaults = () => {
-    Alert.alert(t('profile.reminderDefaultsTitle'), t('profile.reminderDefaultsMsg'), [
-      { text: t('common.ok') },
-    ]);
-  };
-
-  const privacy = () => {
-    Alert.alert(t('profile.privacyTitle'), t('profile.privacyMsg'), [{ text: t('common.ok') }]);
+    setDialog({
+      title: t('profile.reminderDefaultsTitle'),
+      message: t('profile.reminderDefaultsMsg'),
+      actions: [{ label: t('common.ok'), variant: 'primary' }],
+    });
   };
 
   const resetData = () => {
-    Alert.alert(t('profile.resetTitle'), t('profile.resetMsg'), [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('profile.resetContinue'),
-        style: 'destructive',
-        onPress: () => {
-          Alert.alert(t('profile.resetSureTitle'), t('profile.resetSureMsg'), [
-            { text: t('common.cancel'), style: 'cancel' },
-            {
-              text: t('profile.eraseAll'),
-              style: 'destructive',
-              onPress: async () => {
-                  await cancelAllLocalNotifications();
-                  await storage.clearAllFajrKeys();
-                  dispatch({ type: ActionTypes.RESET_ALL });
-                  router.replace('/onboarding');
+    setDialog({
+      title: t('profile.resetTitle'),
+      message: t('profile.resetMsg'),
+      actions: [
+        { label: t('common.cancel'), variant: 'secondary' },
+        {
+          label: t('profile.resetContinue'),
+          variant: 'primary',
+          dismiss: false,
+          onPress: () => {
+            setDialog({
+              title: t('profile.resetSureTitle'),
+              message: t('profile.resetSureMsg'),
+              actions: [
+                { label: t('common.cancel'), variant: 'secondary' },
+                {
+                  label: t('profile.eraseAll'),
+                  variant: 'danger',
+                  onPress: async () => {
+                    await cancelAllLocalNotifications();
+                    await storage.clearAllFajrKeys();
+                    dispatch({ type: ActionTypes.RESET_ALL });
+                    router.replace('/onboarding');
+                  },
                 },
-              },
-            ]);
+              ],
+            });
           },
         },
-      ]
-    );
+      ],
+    });
   };
 
   return (
+    <>
     <View style={[styles.screen, { paddingTop: insets.top + spacing.md }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.titleBlock}>
@@ -261,22 +257,54 @@ export default function ProfileScreen() {
         <Pressable style={[styles.row, styles.cardRow]} onPress={resetData}>
           <Text style={[typography.body, styles.danger]}>{t('profile.resetAll')}</Text>
         </Pressable>
+        <Text style={[typography.bodySmall, styles.localDataDisclaimer]}>
+          {t('profile.localDataDisclaimer')}
+        </Text>
 
         <Text style={[typography.heading, styles.section]}>{t('profile.about')}</Text>
         <View style={[styles.about, shadows.card]}>
-          <Pressable onPress={onVersionPress}>
-            <Text style={[typography.caption, styles.ver]}>{t('common.version', { v: version })}</Text>
-          </Pressable>
+          <Text style={[typography.caption, styles.ver]}>{t('common.version', { v: version })}</Text>
           <Text style={[typography.bodySmall, styles.aboutTxt]}>{t('profile.aboutBody')}</Text>
-          <Pressable onPress={privacy}>
+          <Pressable onPress={() => void Linking.openURL('https://abdirashidexe.github.io/m-habits-3/')}>
             <Text style={[typography.caption, styles.link]}>{t('profile.privacyLink')}</Text>
           </Pressable>
         </View>
+
+        {__DEV__ && state.devUiModeActive ? (
+          <View style={styles.devInline}>
+            <DevToolsSection />
+          </View>
+        ) : null}
+        {__DEV__ ? (
+          <Pressable
+            onPress={() =>
+              dispatch({
+                type: ActionTypes.SET_DEV_UI_MODE_ACTIVE,
+                payload: !state.devUiModeActive,
+              })
+            }
+            style={({ pressed }) => [
+              styles.devToggle,
+              shadows.card,
+              pressed && styles.devTogglePressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={
+              state.devUiModeActive ? t('devTools.exitDevMode') : t('devTools.enterDevMode')
+            }
+          >
+            <Text style={[typography.body, styles.devToggleTxt]}>
+              {state.devUiModeActive ? t('devTools.exitDevMode') : t('devTools.enterDevMode')}
+            </Text>
+          </Pressable>
+        ) : null}
 
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
 
     </View>
+    <ThemedMessageModal dialog={dialog} onDismiss={() => setDialog(null)} />
+    </>
   );
 }
 
@@ -431,6 +459,13 @@ function makeStyles({ colors, radii, spacing }) {
       color: colors.danger,
       fontWeight: '600',
     },
+    localDataDisclaimer: {
+      color: colors.textMuted,
+      paddingHorizontal: spacing.md,
+      marginTop: spacing.xs,
+      marginBottom: spacing.md,
+      lineHeight: 20,
+    },
     about: {
       backgroundColor: colors.surface,
       borderRadius: radii.lg,
@@ -450,6 +485,26 @@ function makeStyles({ colors, radii, spacing }) {
     link: {
       color: colors.primary,
       textDecorationLine: 'underline',
+    },
+    devInline: {
+      marginTop: spacing.md,
+    },
+    devToggle: {
+      marginTop: spacing.md,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.md,
+      borderRadius: radii.md,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.divider,
+      alignItems: 'center',
+    },
+    devTogglePressed: {
+      opacity: 0.92,
+    },
+    devToggleTxt: {
+      color: colors.textPrimary,
+      fontWeight: '600',
     },
   });
 }

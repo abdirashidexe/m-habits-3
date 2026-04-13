@@ -56,45 +56,57 @@ function parseTime(timeStr) {
  * @returns {Promise<void>}
  */
 export async function scheduleHabitReminder(habit) {
-  await cancelHabitReminder(habit.id);
-  if (!habit.reminderEnabled || !habit.reminderTime) return;
+  try {
+    await cancelHabitReminder(habit.id);
+    if (!habit.reminderEnabled || !habit.reminderTime) return;
 
-  const t = parseTime(habit.reminderTime);
-  if (!t) return;
+    const t = parseTime(habit.reminderTime);
+    if (!t) return;
 
-  const title = habit.name;
-  const body = i18n.t('notifications.reminderBody');
+    const title = habit.name;
+    const body = i18n.t('notifications.reminderBody');
 
-  const content = { title, body };
+    const content = { title, body };
 
-  if (habit.frequency === 'daily') {
-    await Notifications.scheduleNotificationAsync({
-      identifier: habit.id,
-      content,
-      trigger: {
+    if (habit.frequency === 'daily') {
+      const trigger = {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         channelId: Platform.OS === 'android' ? 'fajr-default' : undefined,
         hour: t.hour,
         minute: t.minute,
-      },
-    });
-    return;
-  }
+      };
+      await Notifications.scheduleNotificationAsync({
+        identifier: habit.id,
+        content,
+        trigger,
+      });
+      if (__DEV__) {
+        console.log('[Notifications] scheduled:', habit.name, 'trigger:', JSON.stringify(trigger));
+      }
+      return;
+    }
 
-  const days = Array.isArray(habit.specificDays) ? habit.specificDays : [];
-  for (const d of days) {
-    const id = `${habit.id}_${d}`;
-    await Notifications.scheduleNotificationAsync({
-      identifier: id,
-      content,
-      trigger: {
+    const days = Array.isArray(habit.specificDays) ? habit.specificDays : [];
+    for (const d of days) {
+      const id = `${habit.id}_${d}`;
+      const trigger = {
         type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
         channelId: Platform.OS === 'android' ? 'fajr-default' : undefined,
         weekday: toExpoWeekday(d),
         hour: t.hour,
         minute: t.minute,
-      },
-    });
+      };
+      await Notifications.scheduleNotificationAsync({
+        identifier: id,
+        content,
+        trigger,
+      });
+      if (__DEV__) {
+        console.log('[Notifications] scheduled:', habit.name, 'trigger:', JSON.stringify(trigger));
+      }
+    }
+  } catch {
+    // OS scheduler / permissions edge cases — do not break app startup or sync loops.
   }
 }
 
@@ -103,12 +115,16 @@ export async function scheduleHabitReminder(habit) {
  * @returns {Promise<void>}
  */
 export async function cancelHabitReminder(habitId) {
-  const all = await Notifications.getAllScheduledNotificationsAsync();
-  for (const n of all) {
-    const id = n.identifier;
-    if (id === habitId || id.startsWith(`${habitId}_`)) {
-      await Notifications.cancelScheduledNotificationAsync(id);
+  try {
+    const all = await Notifications.getAllScheduledNotificationsAsync();
+    for (const n of all) {
+      const id = n.identifier;
+      if (id === habitId || id.startsWith(`${habitId}_`)) {
+        await Notifications.cancelScheduledNotificationAsync(id);
+      }
     }
+  } catch {
+    // Best-effort cancel.
   }
 }
 
@@ -126,7 +142,11 @@ export async function rescheduleAllHabitReminders(habits) {
  * @returns {Promise<void>}
  */
 export async function cancelAllLocalNotifications() {
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  try {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  } catch {
+    // Best-effort when notifications module unavailable.
+  }
 }
 
 /**
@@ -135,9 +155,13 @@ export async function cancelAllLocalNotifications() {
  */
 export async function setupAndroidNotificationChannel() {
   if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('fajr-default', {
-      name: i18n.t('notifications.channelName'),
-      importance: Notifications.AndroidImportance.DEFAULT,
-    });
+    try {
+      await Notifications.setNotificationChannelAsync('fajr-default', {
+        name: i18n.t('notifications.channelName'),
+        importance: Notifications.AndroidImportance.DEFAULT,
+      });
+    } catch {
+      // Channel setup is best-effort during cold start.
+    }
   }
 }

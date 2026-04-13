@@ -75,11 +75,11 @@ describe('calculateStreak — daily habits', () => {
     expect(r.currentStreak).toBe(7);
   });
 
-  it('returns streak 0 and atRisk true when today is not yet completed but yesterday was completed', () => {
+  it('returns streak 1 and atRisk true when today is not yet completed but yesterday was completed', () => {
     const habit = makeHabit();
     const logs = [makeLog('h1', daysAgo(1), true)];
     const r = calculateStreak('h1', logs, habit, REF_DATE);
-    expect(r.currentStreak).toBe(0);
+    expect(r.currentStreak).toBe(1);
     expect(r.atRisk).toBe(true);
   });
 

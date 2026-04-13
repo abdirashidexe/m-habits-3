@@ -6,7 +6,7 @@ import { useFajrTheme } from '../hooks/useFajrTheme';
  * @param {{
  *   title: string,
  *   onPress: () => void,
- *   variant?: 'primary' | 'secondary' | 'ghost',
+ *   variant?: 'primary' | 'secondary' | 'ghost' | 'danger',
  *   disabled?: boolean,
  *   loading?: boolean,
  *   style?: object,
@@ -26,6 +26,7 @@ export function Button({
   const styles = makeStyles({ colors, typography, spacing, radii });
   const isPrimary = variant === 'primary';
   const isGhost = variant === 'ghost';
+  const isDanger = variant === 'danger';
 
   return (
     <Pressable
@@ -36,6 +37,7 @@ export function Button({
         compact && styles.compact,
         isPrimary && styles.primary,
         variant === 'secondary' && styles.secondary,
+        isDanger && styles.danger,
         isGhost && styles.ghost,
         (disabled || loading) && styles.disabled,
         pressed && !disabled && !loading && styles.pressed,
@@ -44,13 +46,15 @@ export function Button({
     >
       <View style={styles.inner}>
         {loading ? (
-          <ActivityIndicator color={isPrimary ? colors.background : colors.primary} />
+          <ActivityIndicator
+            color={isPrimary || isDanger ? colors.background : colors.primary}
+          />
         ) : (
           <Text
             style={[
               styles.text,
               typography.body,
-              isPrimary && styles.textOnPrimary,
+              (isPrimary || isDanger) && styles.textOnPrimary,
               variant === 'secondary' && styles.textPrimary,
               isGhost && styles.textGhost,
             ]}
@@ -84,6 +88,11 @@ function makeStyles({ colors, typography, spacing, radii }) {
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.divider,
+  },
+  danger: {
+    backgroundColor: colors.danger,
+    borderWidth: 1,
+    borderColor: colors.danger,
   },
   ghost: {
     backgroundColor: 'transparent',

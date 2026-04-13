@@ -35,9 +35,9 @@ const DISTANCE_SPREAD = 100;
 const VERTICAL_LIFT = 40;
 
 /**
- * @param {{ visible: boolean, onFinished: () => void }} props
+ * @param {{ visible: boolean, onFinished: () => void, titleText?: string, subText?: string, showHeadline?: boolean }} props
  */
-export function HabitCompletionRitual({ visible, onFinished }) {
+export function HabitCompletionRitual({ visible, onFinished, titleText, subText, showHeadline = true }) {
   const { t } = useTranslation();
   const { colors, typography, spacing } = useFajrTheme();
   const styles = makeStyles({ colors, spacing });
@@ -148,8 +148,12 @@ export function HabitCompletionRitual({ visible, onFinished }) {
           // Guard: BlurView can be unavailable in some runtimes (e.g. web / non-native clients)
           <SafeBlur />
         ) : null}
-        <Text style={[typography.heading, styles.title]}>{t('ritual.title')}</Text>
-        <Text style={[typography.body, styles.sub]}>{t('ritual.sub')}</Text>
+        {showHeadline ? (
+          <>
+            <Text style={[typography.heading, styles.title]}>{titleText ?? t('ritual.title')}</Text>
+            <Text style={[typography.body, styles.sub]}>{subText ?? t('ritual.sub')}</Text>
+          </>
+        ) : null}
 
         {!reduceMotion ? (
           <View style={styles.burst} key={renderTick}>
@@ -181,7 +185,8 @@ class BlurErrorBoundary extends React.Component {
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  componentDidCatch(error) {
+  componentDidCatch() {
+    /* blur unavailable — child hidden */
   }
   render() {
     if (this.state.hasError) return null;
@@ -202,20 +207,13 @@ function SafeBlur() {
       return null;
     }
 
-    // eslint-disable-next-line global-require
     const { BlurView } = require('expo-blur');
-
-    function BlurProbe() {
-      useEffect(() => {}, []);
-      return <BlurView intensity={28} tint="dark" style={StyleSheet.absoluteFillObject} />;
-    }
-
     return (
       <BlurErrorBoundary>
-        <BlurProbe />
+        <BlurView intensity={28} tint="dark" style={StyleSheet.absoluteFillObject} />
       </BlurErrorBoundary>
     );
-  } catch (e) {
+  } catch {
     return null;
   }
 }

@@ -122,7 +122,7 @@ export default function OnboardingScreen() {
         {step > 0 ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Back"
+            accessibilityLabel={t('common.back')}
             hitSlop={12}
             onPress={() => goToStep(step - 1)}
             style={[
@@ -179,7 +179,7 @@ export default function OnboardingScreen() {
           <View style={pageStyle}>
             <View style={styles.slideInner}>
               <Text style={[typography.displayLarge, styles.title]}>{t('onboarding.title')}</Text>
-              <Text style={styles.credit}>BY KASRAH</Text>
+              <Text style={styles.credit}>{t('onboarding.credit')}</Text>
               <MoonIllustration />
               <Button compact title={t('onboarding.continue')} onPress={() => goToStep(2)} style={styles.btn} />
             </View>
@@ -188,7 +188,7 @@ export default function OnboardingScreen() {
           <View style={pageStyle}>
             <View style={styles.slideInner}>
               <Text style={[typography.displayMedium, styles.heading]}>{t('onboarding.trackTitle')}</Text>
-              <Text style={[typography.body, styles.body]}>{t('onboarding.trackBody')}</Text>
+              <Text style={[typography.body, styles.body, { paddingHorizontal: spacing.sm }]}>{t('onboarding.trackBody')}</Text>
               <Button compact title={t('onboarding.continue')} onPress={() => goToStep(3)} style={styles.btn} />
             </View>
           </View>
@@ -212,6 +212,9 @@ export default function OnboardingScreen() {
                 disabled={!name.trim()}
                 style={styles.btn}
               />
+              <Text style={[typography.bodySmall, styles.dataDisclaimer]}>
+                {t('onboarding.dataDisclaimer')}
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -279,7 +282,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   credit: {
-    fontFamily: 'Poppins',
+    fontFamily: 'Lexend',
     fontSize: 13,
     fontWeight: '300',
     letterSpacing: 6,
@@ -359,6 +362,13 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginBottom: spacing.md,
     textAlign: 'center',
+  },
+  dataDisclaimer: {
+    color: colors.textMuted,
+    marginTop: spacing.md,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: spacing.sm,
   },
   btn: {
     marginTop: spacing.md,

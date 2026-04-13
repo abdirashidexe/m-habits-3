@@ -31,12 +31,20 @@ export async function readJson(key, defaultValue) {
  * @returns {Promise<void>}
  */
 export async function writeJson(key, value) {
-  await AsyncStorage.setItem(key, JSON.stringify(value));
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Disk full, permission, or native bridge failure — avoid crashing the app.
+  }
 }
 
 /**
  * @returns {Promise<void>}
  */
 export async function clearAllFajrKeys() {
-  await AsyncStorage.multiRemove(Object.values(KEYS));
+  try {
+    await AsyncStorage.multiRemove(Object.values(KEYS));
+  } catch {
+    // Best-effort clear; callers may retry or continue reset flow.
+  }
 }

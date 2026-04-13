@@ -50,17 +50,6 @@ export function calculateStreak(habitId, logs, habit, refDate = now()) {
 
   const longest = () => longestStreakEverForHabit(habitId, habit, logs, refDate);
 
-  // Due today but not checked in yet: streak stays 0 while yesterday still "counts" as motivation (at risk).
-  if (dueToday && !completedToday && completedYesterday) {
-    return {
-      currentStreak: 0,
-      longestStreak: longest(),
-      completedToday: false,
-      dueToday: true,
-      atRisk: true,
-    };
-  }
-
   if (dueYesterday && !completedYesterday) {
     if (completedToday) {
       return {

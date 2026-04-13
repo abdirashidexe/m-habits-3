@@ -43,6 +43,7 @@ import { nowIso } from '../utils/now';
  * @property {boolean} onboarded
  * @property {boolean} masterNotificationsEnabled
  * @property {string | null} devDateOverride
+ * @property {boolean} devUiModeActive
  * @property {boolean} hydrated
  */
 
@@ -66,6 +67,7 @@ export const initialState = {
   onboarded: false,
   masterNotificationsEnabled: true,
   devDateOverride: null,
+  devUiModeActive: false,
   hydrated: false,
 };
 
@@ -79,6 +81,7 @@ export const ActionTypes = {
   SET_PLUS: 'SET_PLUS',
   SET_MASTER_NOTIFICATIONS: 'SET_MASTER_NOTIFICATIONS',
   SET_DEV_DATE_OVERRIDE: 'SET_DEV_DATE_OVERRIDE',
+  SET_DEV_UI_MODE_ACTIVE: 'SET_DEV_UI_MODE_ACTIVE',
   SET_HABITS: 'SET_HABITS',
   ADD_HABIT: 'ADD_HABIT',
   UPDATE_HABIT: 'UPDATE_HABIT',
@@ -177,6 +180,8 @@ export function appReducer(state, action) {
       return { ...state, masterNotificationsEnabled: Boolean(action.payload) };
     case ActionTypes.SET_DEV_DATE_OVERRIDE:
       return { ...state, devDateOverride: action.payload ? String(action.payload) : null };
+    case ActionTypes.SET_DEV_UI_MODE_ACTIVE:
+      return { ...state, devUiModeActive: Boolean(action.payload) };
     case ActionTypes.SET_HABITS:
       return { ...state, habits: Array.isArray(action.payload) ? action.payload : [] };
     case ActionTypes.ADD_HABIT:
