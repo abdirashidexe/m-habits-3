@@ -13,7 +13,7 @@ import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { getDateFnsLocale } from '../../utils/dateLocale';
 import { formatDateDisplay, formatHijriDisplay, getDayOfYear, toLocalDateString } from '../../utils/dates';
 import { now, nowIso } from '../../utils/now';
-import { calculateStreak, isHabitDueOnDate } from '../../utils/streak';
+import { isHabitDueOnDate } from '../../utils/streak';
 
 function greetingPeriod(date) {
   const h = date.getHours();
@@ -205,7 +205,6 @@ export default function HomeScreen() {
               </>
             ) : null}
             {dueTodayList.map((h) => {
-              const s = calculateStreak(h.id, state.habitLogs, h, today);
               const log = state.habitLogs.find((l) => l.habitId === h.id && l.date === todayStr);
               const done = Boolean(log?.completed);
               const willCompleteAll =
@@ -218,9 +217,10 @@ export default function HomeScreen() {
               return (
                 <HabitCard
                   key={h.id}
-                  name={h.name}
-                  streak={s.currentStreak}
-                  atRisk={isEvening ? s.atRisk : false}
+                  habit={h}
+                  logs={state.habitLogs}
+                  referenceDate={today}
+                  isEvening={isEvening}
                   completed={done}
                   suppressConfettiOnComplete={willCompleteAll}
                   onToggle={() => toggleHabit(h.id, done)}

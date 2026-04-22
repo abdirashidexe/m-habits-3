@@ -86,7 +86,6 @@ export default function ProfileScreen() {
 
   const version = Constants.expoConfig?.version || '1.0.0';
   const plus = state.userProfile.isPlus;
-  const darkMode = Boolean(state.userProfile.darkMode);
   const dateLocale = useMemo(
     () => getDateFnsLocale(state.userProfile.language || 'en'),
     [state.userProfile.language]
@@ -222,18 +221,11 @@ export default function ProfileScreen() {
         )}
 
         <Text style={[typography.heading, styles.section]}>{t('profile.settings')}</Text>
-        <View style={[styles.row, styles.cardRow]}>
-          <Text style={[typography.body, styles.rowLbl]}><FontAwesome6 name="moon" size={16} color={colors.textPrimary} /> {t('profile.darkMode')}</Text>
-          <ThemedSwitch
-            value={darkMode}
-            onValueChange={(v) => dispatch({ type: ActionTypes.SET_DARK_MODE, payload: v })}
-          />
-        </View>
         <Pressable
           style={[styles.row, styles.cardRow]}
-          onPress={() => router.push('/modals/app-colors')}
+          onPress={() => router.push('/modals/customization')}
         >
-          <Text style={[typography.body, styles.rowLbl]}><FontAwesome6 name="palette" size={16} color={colors.textPrimary} /> {t('profile.appColors')}</Text>
+          <Text style={[typography.body, styles.rowLbl]}><FontAwesome6 name="palette" size={16} color={colors.textPrimary} /> {t('profile.customization')}</Text>
           <Text style={[typography.caption, styles.chev]}>›</Text>
         </Pressable>
         <Pressable

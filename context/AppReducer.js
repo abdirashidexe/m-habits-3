@@ -198,7 +198,8 @@ export function appReducer(state, action) {
       return {
         ...state,
         habits: state.habits.filter((x) => x.id !== action.payload),
-        habitLogs: state.habitLogs.filter((l) => l.habitId !== action.payload),
+        // Keep habitLogs to preserve history (deleted habits show as "Deleted habit" in history views)
+        habitLogs: state.habitLogs,
       };
     case ActionTypes.SET_HABIT_LOGS:
       return { ...state, habitLogs: Array.isArray(action.payload) ? action.payload : [] };

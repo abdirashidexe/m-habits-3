@@ -4,15 +4,15 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  useWindowDimensions,
-  View,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    useWindowDimensions,
+    View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -52,7 +52,7 @@ export default function OnboardingScreen() {
 
   const goToStep = useCallback(
     (i) => {
-      const clamped = Math.max(0, Math.min(3, i));
+      const clamped = Math.max(0, Math.min(4, i));
       setStep(clamped);
       requestAnimationFrame(() => {
         scrollRef.current?.scrollTo({ x: clamped * windowWidth, animated: true });
@@ -74,21 +74,16 @@ export default function OnboardingScreen() {
   }, [step]);
 
   useEffect(() => {
-    if (step !== 3) {
+    if (step !== 4) {
       nameInputRef.current?.blur();
-      return;
     }
-    const id = requestAnimationFrame(() => {
-      nameInputRef.current?.focus();
-    });
-    return () => cancelAnimationFrame(id);
   }, [step]);
 
   const onMomentumScrollEnd = useCallback(
     (e) => {
       const x = e.nativeEvent.contentOffset.x;
       const i = Math.round(x / Math.max(1, windowWidth));
-      if (i < 0 || i > 3) return;
+      if (i < 0 || i > 4) return;
       const current = stepRef.current;
       if (i > current) {
         requestAnimationFrame(() => {
@@ -187,9 +182,27 @@ export default function OnboardingScreen() {
 
           <View style={pageStyle}>
             <View style={styles.slideInner}>
+              <View style={styles.onboardingIconRow}>
+                <FontAwesome6 name="clipboard-list" size={28} color={colors.primary} />
+                <FontAwesome6 name="repeat" size={28} color={colors.primary} />
+                <FontAwesome6 name="chart-area" size={28} color={colors.primary} />
+              </View>
               <Text style={[typography.displayMedium, styles.heading]}>{t('onboarding.trackTitle')}</Text>
               <Text style={[typography.body, styles.body, { paddingHorizontal: spacing.sm }]}>{t('onboarding.trackBody')}</Text>
               <Button compact title={t('onboarding.continue')} onPress={() => goToStep(3)} style={styles.btn} />
+            </View>
+          </View>
+
+          <View style={pageStyle}>
+            <View style={styles.slideInner}>
+              <View style={styles.onboardingIconRow}>
+                <FontAwesome6 name="laptop-code" size={28} color={colors.primary} />
+                <FontAwesome6 name="hand-holding-heart" size={28} color={colors.accent} />
+                <FontAwesome6 name="kit-medical" size={28} color={colors.primary} />
+              </View>
+              <Text style={[typography.displayMedium, styles.heading]}>{t('onboarding.sadaqahTitle')}</Text>
+              <Text style={[typography.body, styles.body, { paddingHorizontal: spacing.sm }]}>{t('onboarding.sadaqahBody')}</Text>
+              <Button compact title={t('onboarding.continue')} onPress={() => goToStep(4)} style={styles.btn} />
             </View>
           </View>
 
@@ -220,7 +233,7 @@ export default function OnboardingScreen() {
         </ScrollView>
 
         <View style={[styles.dotsRow, { paddingBottom: Math.max(insets.bottom, spacing.md) }]}>
-          {[0, 1, 2, 3].map((i) => (
+          {[0, 1, 2, 3, 4].map((i) => (
             <View key={i} style={[styles.dot, i === step ? styles.dotActive : styles.dotInactive]} />
           ))}
         </View>
@@ -331,6 +344,13 @@ const styles = StyleSheet.create({
     height: 6,
     top: 48,
     right: 40,
+  },
+  onboardingIconRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacing.lg,
+    marginBottom: spacing.lg,
   },
   heading: {
     color: colors.textPrimary,

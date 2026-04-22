@@ -16,10 +16,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../components/Button';
 import { DayPicker } from '../../components/DayPicker';
 import { Input } from '../../components/Input';
-import { ThemedSwitch } from '../../components/ThemedSwitch';
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
-import { cancelHabitReminder, scheduleHabitReminder } from '../../utils/notifications';
+import { cancelHabitReminder } from '../../utils/notifications';
 import { nowIso } from '../../utils/now';
 import { createUuid } from '../../utils/uuid';
 
@@ -41,21 +40,12 @@ export default function AddHabitModal() {
   const [name, setName] = useState('');
   const [freqDaily, setFreqDaily] = useState(true);
   const [specificDays, setSpecificDays] = useState([]);
-  const [reminderOn, setReminderOn] = useState(false);
-  const [hour, setHour] = useState('8');
-  const [minute, setMinute] = useState('0');
 
   useEffect(() => {
     if (existing) {
       setName(existing.name);
       setFreqDaily(existing.frequency === 'daily');
       setSpecificDays(existing.specificDays || []);
-      setReminderOn(existing.reminderEnabled);
-      if (existing.reminderTime) {
-        const [h, m] = existing.reminderTime.split(':');
-        setHour(h || '8');
-        setMinute(m || '0');
-      }
     }
   }, [existing]);
 
@@ -72,12 +62,6 @@ export default function AddHabitModal() {
 
   const close = () => router.back();
 
-  const reminderTimeStr = () => {
-    const h = Math.min(23, Math.max(0, parseInt(hour, 10) || 0));
-    const m = Math.min(59, Math.max(0, parseInt(minute, 10) || 0));
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  };
-
   const save = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
@@ -90,15 +74,14 @@ export default function AddHabitModal() {
 
     const allDaysSelected = !freqDaily && Array.isArray(specificDays) && specificDays.length === 7;
     const normalizedFreqDaily = freqDaily || allDaysSelected;
-    const reminderTime = reminderOn ? reminderTimeStr() : null;
     const payload = {
       id: existing?.id || createUuid(),
       name: trimmed.slice(0, 40),
       type: 'custom',
       frequency: normalizedFreqDaily ? 'daily' : 'specific_days',
       specificDays: normalizedFreqDaily ? [] : [...specificDays].sort((a, b) => a - b),
-      reminderEnabled: reminderOn,
-      reminderTime,
+      reminderEnabled: false,
+      reminderTime: null,
       createdAt: existing?.createdAt || nowIso(),
       isPlus: false,
     };
@@ -109,11 +92,7 @@ export default function AddHabitModal() {
       dispatch({ type: ActionTypes.ADD_HABIT, payload });
     }
 
-    if (reminderOn && state.masterNotificationsEnabled) {
-      await scheduleHabitReminder(payload);
-    } else {
-      await cancelHabitReminder(payload.id);
-    }
+    await cancelHabitReminder(payload.id);
 
     close();
   };
@@ -169,30 +148,6 @@ export default function AddHabitModal() {
         {!freqDaily ? (
           <View style={styles.dpWrap}>
             <DayPicker value={specificDays} onChange={setSpecificDays} />
-          </View>
-        ) : null}
-
-        <View style={styles.rowBetween}>
-          <Text style={[typography.body, styles.lbl]}>{t('addHabit.reminder')}</Text>
-          <ThemedSwitch value={reminderOn} onValueChange={setReminderOn} />
-        </View>
-
-        {reminderOn ? (
-          <View style={styles.timeRow}>
-            <Text style={[typography.caption, styles.timeLbl]}>{t('addHabit.hour')}</Text>
-            <Input
-              value={hour}
-              onChangeText={(t) => setHour(t.replace(/[^\d]/g, '').slice(0, 2))}
-              keyboardType="number-pad"
-              style={styles.timeInput}
-            />
-            <Text style={[typography.caption, styles.timeLbl]}>{t('addHabit.minute')}</Text>
-            <Input
-              value={minute}
-              onChangeText={(t) => setMinute(t.replace(/[^\d]/g, '').slice(0, 2))}
-              keyboardType="number-pad"
-              style={styles.timeInput}
-            />
           </View>
         ) : null}
 
@@ -280,16 +235,6 @@ function makeStyles({ colors, spacing, radii }) {
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: spacing.md,
-    },
-    timeRow: {
-      marginBottom: spacing.lg,
-    },
-    timeLbl: {
-      color: colors.textSecondary,
-      marginBottom: spacing.xs,
-    },
-    timeInput: {
-      marginBottom: spacing.sm,
     },
     save: {
       marginTop: spacing.md,

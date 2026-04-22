@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import { format, subDays } from 'date-fns';
-import { calculateStreak } from '../utils/streak.js';
+import { calculateMonthlyConsistency, calculateStreak } from '../utils/streak.js';
 import { setDevDateOverride } from '../utils/now.js';
 
 /** Fixed reference calendar date for every test (local 2025-06-15). */
@@ -232,5 +232,68 @@ describe('calculateStreak — edge cases', () => {
     ];
     const r = calculateStreak('h1', logs, habit, REF_DATE);
     expect(r.currentStreak).toBe(1);
+  });
+});
+
+describe('calculateMonthlyConsistency', () => {
+  it('returns 100% and isPerfect true when all due days completed this month', () => {
+    const habit = makeHabit({ createdAt: '2025-05-01T00:00:00.000Z' });
+    const logs = [];
+    for (let d = 1; d <= 15; d += 1) {
+      const ds = format(new Date(2025, 5, d), 'yyyy-MM-dd');
+      logs.push(makeLog('h1', ds, true));
+    }
+    const r = calculateMonthlyConsistency('h1', logs, habit, REF_DATE);
+    expect(r.completedDays).toBe(15);
+    expect(r.dueDays).toBe(15);
+    expect(r.percentage).toBe(100);
+    expect(r.isPerfect).toBe(true);
+  });
+
+  it('returns correct percentage when some days missed', () => {
+    const habit = makeHabit({ createdAt: '2025-05-01T00:00:00.000Z' });
+    const logs = [];
+    // 12/15 completed (miss 3 days by omitting logs)
+    for (let d = 1; d <= 15; d += 1) {
+      if ([4, 9, 13].includes(d)) continue;
+      const ds = format(new Date(2025, 5, d), 'yyyy-MM-dd');
+      logs.push(makeLog('h1', ds, true));
+    }
+    const r = calculateMonthlyConsistency('h1', logs, habit, REF_DATE);
+    expect(r.completedDays).toBe(12);
+    expect(r.dueDays).toBe(15);
+    expect(r.percentage).toBe(80);
+    expect(r.isPerfect).toBe(false);
+  });
+
+  it('returns 0% when no logs exist', () => {
+    const habit = makeHabit({ createdAt: '2025-05-01T00:00:00.000Z' });
+    const r = calculateMonthlyConsistency('h1', [], habit, REF_DATE);
+    expect(r.completedDays).toBe(0);
+    expect(r.dueDays).toBe(15);
+    expect(r.percentage).toBe(0);
+    expect(r.isPerfect).toBe(false);
+  });
+
+  it('returns 0 dueDays and 0% for a specific_days habit when no due days have occurred yet this month', () => {
+    const habit = makeHabit({
+      createdAt: '2025-06-15T00:00:00.000Z',
+      frequency: 'specific_days',
+      specificDays: [1], // Monday; 2025-06-15 is Sunday
+    });
+    const r = calculateMonthlyConsistency('h1', [], habit, REF_DATE);
+    expect(r.completedDays).toBe(0);
+    expect(r.dueDays).toBe(0);
+    expect(r.percentage).toBe(0);
+    expect(r.isPerfect).toBe(false);
+  });
+
+  it('does not count future days in the month toward dueDays', () => {
+    const habit = makeHabit({ createdAt: '2025-05-01T00:00:00.000Z' });
+    const logs = [makeLog('h1', '2025-06-20', true)];
+    const r = calculateMonthlyConsistency('h1', logs, habit, REF_DATE);
+    expect(r.completedDays).toBe(0);
+    expect(r.dueDays).toBe(15);
+    expect(r.percentage).toBe(0);
   });
 });

@@ -1,4 +1,4 @@
-import { startOfDay, subDays, isBefore, isAfter, parseISO, isValid } from 'date-fns';
+import { startOfDay, startOfMonth, subDays, addDays, isBefore, isAfter, parseISO, isValid } from 'date-fns';
 import { getDayIndex, toLocalDateString, eachDayInclusive, parseYmd } from './dates';
 import { now } from './now';
 
@@ -276,4 +276,32 @@ export function maxLongestStreakAcrossHabits(habits, logs) {
 export function isDateInFutureYmd(ymd, ref = now()) {
   const d = parseYmd(ymd);
   return isAfter(startOfDay(d), startOfDay(ref));
+}
+
+/**
+ * @param {string} habitId
+ * @param {HabitLog[]} logs
+ * @param {Habit} habit
+ * @param {Date} [referenceDate]
+ * @returns {{ completedDays: number, dueDays: number, percentage: number, isPerfect: boolean }}
+ */
+export function calculateMonthlyConsistency(habitId, logs, habit, referenceDate = now()) {
+  const ref0 = startOfDay(referenceDate);
+  const month0 = startOfMonth(ref0);
+  const created0 = startOfDay(parseISO(habit?.createdAt || ''));
+  const start = isValid(created0) && isAfter(created0, month0) ? created0 : month0;
+
+  let completedDays = 0;
+  let dueDays = 0;
+
+  for (let d = new Date(start); !isAfter(d, ref0); d = addDays(d, 1)) {
+    if (!isHabitDueOnDate(habit, d)) continue;
+    dueDays += 1;
+    const ds = toLocalDateString(d);
+    if (isCompletedOnDate(habitId, ds, logs)) completedDays += 1;
+  }
+
+  const percentage = dueDays > 0 ? Math.round((completedDays / dueDays) * 100) : 0;
+  const isPerfect = completedDays === dueDays && dueDays > 0;
+  return { completedDays, dueDays, percentage, isPerfect };
 }

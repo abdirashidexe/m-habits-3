@@ -2,25 +2,57 @@ import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { differenceInCalendarDays, isValid, parseISO, startOfDay } from 'date-fns';
 import { useFajrTheme } from '../hooks/useFajrTheme';
+import { calculateMonthlyConsistency, calculateStreak } from '../utils/streak';
 import { ConfettiBurst } from './ConfettiBurst';
 
 /**
  * @param {{
- *   name: string,
- *   streak: number,
- *   atRisk: boolean,
+ *   habit: { id: string, name: string, createdAt: string },
+ *   logs: { habitId: string, date: string, completed: boolean }[],
+ *   referenceDate?: Date,
+ *   isEvening?: boolean,
  *   completed: boolean,
  *   suppressConfettiOnComplete?: boolean,
  *   onToggle: () => void,
  * }} props
  */
-export function HabitCard({ name, streak, atRisk, completed, suppressConfettiOnComplete = false, onToggle }) {
+export function HabitCard({
+  habit,
+  logs,
+  referenceDate,
+  isEvening = false,
+  completed,
+  suppressConfettiOnComplete = false,
+  onToggle,
+}) {
   const { t } = useTranslation();
   const { colors, typography, spacing, radii, shadows } = useFajrTheme();
   const styles = makeStyles({ colors, typography, spacing, radii });
-  const fire = streak > 2;
   const [confettiOn, setConfettiOn] = useState(false);
+
+  const streakInfo = calculateStreak(habit.id, logs, habit, referenceDate);
+  const atRisk = isEvening ? streakInfo.atRisk : false;
+  const consistency = calculateMonthlyConsistency(habit.id, logs, habit, referenceDate);
+  const created0 = startOfDay(parseISO(habit?.createdAt || ''));
+  const ref0 = startOfDay(referenceDate || new Date());
+  const historyDays = isValid(created0) ? differenceInCalendarDays(ref0, created0) + 1 : 9999;
+
+  let metaText = '';
+  let metaStyle = styles.metaText;
+  if (historyDays < 7) {
+    metaText = t('habitCard.daysInARow', { count: streakInfo.currentStreak });
+    metaStyle = styles.metaMuted;
+  } else if (consistency.isPerfect) {
+    metaText = t('habitCard.perfectMonth');
+    metaStyle = styles.metaPerfect;
+  } else {
+    metaText = t('habitCard.monthProgress', {
+      completed: consistency.completedDays,
+      due: consistency.dueDays,
+    });
+  }
 
   const handleToggle = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -46,11 +78,9 @@ export function HabitCard({ name, streak, atRisk, completed, suppressConfettiOnC
       />
       <View style={styles.row}>
         <View style={styles.info}>
-          <Text style={[typography.subheading, styles.name]}>{name}</Text>
+          <Text style={[typography.subheading, styles.name]}>{habit.name}</Text>
           <View style={styles.meta}>
-            <Text style={[typography.caption, styles.streak]}>
-              {t('habitCard.streak', { fire: fire ? '🔥 ' : '', count: streak })}
-            </Text>
+            <Text style={[typography.caption, metaStyle]}>{metaText}</Text>
             {atRisk && !completed ? (
               <Text style={[typography.caption, styles.risk]}>{t('habitCard.atRisk')}</Text>
             ) : null}
@@ -109,8 +139,16 @@ function makeStyles({ colors, typography, spacing, radii }) {
     flexWrap: 'wrap',
     marginTop: spacing.xs,
   },
-  streak: {
+  metaText: {
     color: colors.textSecondary,
+  },
+  metaMuted: {
+    color: colors.textMuted,
+    fontWeight: '400',
+  },
+  metaPerfect: {
+    color: colors.accent,
+    fontWeight: '700',
   },
   risk: {
     color: colors.accent,
