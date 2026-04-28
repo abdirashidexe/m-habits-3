@@ -29,6 +29,7 @@ export default function HomeScreen() {
   const { state, dispatch } = useApp();
   const { colors, radii, spacing, typography, shadows } = useFajrTheme();
   const styles = makeStyles({ colors, radii, spacing });
+  const isDarkMode = Boolean(state.userProfile.darkMode);
   const [today, setToday] = useState(() => now());
   useFocusEffect(
     useCallback(() => {
@@ -82,7 +83,7 @@ export default function HomeScreen() {
   );
 
   useEffect(() => {
-    if (customHabits.length > 0) {
+    if (customHabits.length > 0 || isDarkMode) {
       glowPulse.stopAnimation();
       glowPulse.setValue(0);
       return undefined;
@@ -105,7 +106,7 @@ export default function HomeScreen() {
     );
     pulse.start();
     return () => pulse.stop();
-  }, [customHabits.length, glowPulse]);
+  }, [customHabits.length, glowPulse, isDarkMode]);
 
   const initial = (state.userProfile.name || '?').trim().charAt(0).toUpperCase();
   const [ritualOn, setRitualOn] = useState(false);
@@ -182,7 +183,7 @@ export default function HomeScreen() {
               <>
                 <Text style={[typography.body, styles.emptyH]}>{t('home.noHabitsDue')}</Text>
                 <View style={styles.addHabitBtnWrap}>
-                  {customHabits.length === 0 ? (
+                  {customHabits.length === 0 && !isDarkMode ? (
                     <Animated.View
                       pointerEvents="none"
                       style={[

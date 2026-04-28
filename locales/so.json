@@ -14,6 +14,7 @@
     "home": "Guriga",
     "habits": "Caadooyin",
     "stats": "Tirooyin",
+    "analytics": "Falanqayn",
     "profile": "Profile"
   },
   "home": {
@@ -65,6 +66,9 @@
   "stats": {
     "title": "Ka fikir taariikhdaada.",
     "subtitle": "Feker, ma aha soo noqnoqoshada.",
+    "analyticsTitle": "Falanqayn",
+    "analyticsSubtitle": "Ka fikir taariikhdaada.",
+    "historyTitle": "Taariikh",
     "yourStreaks": "Joogteyntaada",
     "noStreaks": "Ma jiraan caadooyin maanta la filayo.",
     "longest": "Ugu dheer {{count}} maalin",
@@ -87,6 +91,13 @@
     "dayLetterThu": "Kh",
     "dayLetterFri": "J",
     "dayLetterSat": "S",
+    "legendAllDone": "Dhammaan way qabsoomeen",
+    "legendPartial": "Qayb ahaan",
+    "legendMissed": "La seegay",
+    "legendNoHabits": "Caado ma jirto",
+    "prevMonthA11y": "Bishii hore",
+    "nextMonthA11y": "Bisha xigta",
+    "fullHistoryUpsell": "Arag taariikhdaada oo dhan adigoo wata Fajr+ - bil kasta, laga bilaabo maalintii koowaad.",
     "plusTitle": "Fajr Plus",
     "plusHint": "Qorshaha bilaash wuxuu muujiyaa toddobaadkan. Plus wuxuu ku darayaa taariikh qoto dheer."
   },

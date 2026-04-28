@@ -120,10 +120,13 @@ export function getColors(mode = 'light', colorTheme = 'main') {
   const base = mode === 'dark' ? { ...darkColors } : { ...lightColors };
   if (mode === 'dark') {
     const patch = DARK_THEME_SURFACES[colorTheme] || DARK_THEME_SURFACES.main;
+    const { primary, primaryLight, divider } = patch;
     return {
       ...base,
-      ...patch,
-      success: patch.primary,
+      primary,
+      primaryLight,
+      divider,
+      success: primary,
     };
   }
   if (colorTheme === 'pink') {
@@ -180,6 +183,30 @@ export function getColors(mode = 'light', colorTheme = 'main') {
 
 export function makeShadows(c) {
   const shadowColor = c.textPrimary;
+  const isDarkTheme =
+    c.background === darkColors.background &&
+    c.surface === darkColors.surface &&
+    c.surfaceElevated === darkColors.surfaceElevated;
+
+  if (isDarkTheme) {
+    return {
+      card: {
+        elevation: 1,
+        shadowColor,
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+      },
+      modal: {
+        elevation: 1,
+        shadowColor,
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 2 },
+      },
+    };
+  }
+
   return {
     card: {
       elevation: 2,

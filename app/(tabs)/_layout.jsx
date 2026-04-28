@@ -52,7 +52,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="stats"
         options={{
-          title: t('tabs.stats'),
+          title: t('tabs.analytics'),
           tabBarIcon: ({ color }) => <TabIcon color={color} label={<FontAwesome6 name="chart-simple" size={24} color={color} />} />,
         }}
       />

@@ -1,3 +1,4 @@
+import Icon from 'react-native-ico-flags';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
@@ -16,6 +17,13 @@ export default function LanguageModal() {
   const { colors, typography, spacing, radii } = useFajrTheme();
   const styles = makeStyles({ colors, spacing, radii });
   const selected = state.userProfile.language || 'en';
+  const flagIcons = {
+    en: 'united-kingdom',
+    ar: 'saudi-arabia',
+    ur: 'pakistan',
+    so: 'somalia',
+    id: 'indonesia',
+  };
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
@@ -44,7 +52,10 @@ export default function LanguageModal() {
                 isOn && { backgroundColor: colors.surfaceElevated },
               ]}
             >
-              <Text style={[typography.body, { color: colors.textPrimary }]}>{native}</Text>
+              <View style={styles.rowContent}>
+                <Icon name={flagIcons[id]} size={24} style={styles.flag} />
+                <Text style={[typography.body, { color: colors.textPrimary }]}>{native}</Text>
+              </View>
             </Pressable>
           );
         })}
@@ -88,6 +99,13 @@ function makeStyles({ colors, spacing, radii }) {
       backgroundColor: colors.surface,
       paddingVertical: spacing.md,
       paddingHorizontal: spacing.md,
+    },
+    rowContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    flag: {
+      marginRight: spacing.sm,
     },
   });
 }

@@ -14,6 +14,7 @@
     "home": "Home",
     "habits": "Habits",
     "stats": "Stats",
+    "analytics": "Analytics",
     "profile": "Profile"
   },
   "home": {
@@ -65,6 +66,9 @@
   "stats": {
     "title": "Reflect on your history.",
     "subtitle": "Reflection, not repetition.",
+    "analyticsTitle": "Analytics",
+    "analyticsSubtitle": "Reflect on your history.",
+    "historyTitle": "History",
     "yourStreaks": "Your consistency",
     "noStreaks": "No habits to track yet.",
     "longest": "Longest {{count}} day",
@@ -87,6 +91,13 @@
     "dayLetterThu": "T",
     "dayLetterFri": "F",
     "dayLetterSat": "S",
+    "legendAllDone": "All done",
+    "legendPartial": "Partial",
+    "legendMissed": "Missed",
+    "legendNoHabits": "No habits",
+    "prevMonthA11y": "Previous month",
+    "nextMonthA11y": "Next month",
+    "fullHistoryUpsell": "See your full history with Fajr+ - every month, since day one.",
     "plusTitle": "Fajr Plus",
     "plusHint": "Free plan shows this week view. Plus adds deeper history views."
   },

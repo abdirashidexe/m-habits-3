@@ -14,6 +14,7 @@
     "home": "ہوم",
     "habits": "عادات",
     "stats": "اعدادوشمار",
+    "analytics": "تجزیہ",
     "profile": "پروفائل"
   },
   "home": {
@@ -65,6 +66,9 @@
   "stats": {
     "title": "اپنی تاریخ پر غور کریں۔",
     "subtitle": "غور و فکر، بےمعنی تکرار نہیں۔",
+    "analyticsTitle": "تجزیہ",
+    "analyticsSubtitle": "اپنی تاریخ پر غور کریں۔",
+    "historyTitle": "تاریخ",
     "yourStreaks": "آپ کی مستقل مزاجی",
     "noStreaks": "آپ کے پاس کبھی بھی عادت نہیں ہے۔",
     "longest": "سب سے لمبا {{count}} دن",
@@ -87,6 +91,13 @@
     "dayLetterThu": "ج",
     "dayLetterFri": "ج",
     "dayLetterSat": "ہ",
+    "legendAllDone": "سب مکمل",
+    "legendPartial": "جزوی",
+    "legendMissed": "چھوٹ گیا",
+    "legendNoHabits": "کوئی عادت نہیں",
+    "prevMonthA11y": "پچھلا مہینہ",
+    "nextMonthA11y": "اگلا مہینہ",
+    "fullHistoryUpsell": "فجر+ کے ساتھ اپنی مکمل تاریخ دیکھیں - ہر مہینہ، پہلے دن سے۔",
     "plusTitle": "فجر پلس",
     "plusHint": "مفت میں یہ ہفتہ۔ پلس میں گہری تاریخ۔"
   },

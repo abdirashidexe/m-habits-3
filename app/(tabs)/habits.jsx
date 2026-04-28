@@ -29,6 +29,7 @@ export default function HabitsScreen() {
   const { state, dispatch } = useApp();
   const { colors, typography, spacing, radii, shadows } = useFajrTheme();
   const styles = makeStyles({ colors, spacing, radii });
+  const isDarkMode = Boolean(state.userProfile.darkMode);
   const plus = state.userProfile.isPlus;
   const [reorderMode, setReorderMode] = React.useState(false);
   const [dialog, setDialog] = React.useState(null);
@@ -118,7 +119,7 @@ export default function HabitsScreen() {
   };
 
   useEffect(() => {
-    if (customHabits.length > 0) {
+    if (customHabits.length > 0 || isDarkMode) {
       glowPulse.stopAnimation();
       glowPulse.setValue(0);
       return undefined;
@@ -141,7 +142,7 @@ export default function HabitsScreen() {
     );
     pulse.start();
     return () => pulse.stop();
-  }, [customHabits.length, glowPulse]);
+  }, [customHabits.length, glowPulse, isDarkMode]);
 
   return (
     <>
@@ -265,7 +266,7 @@ export default function HabitsScreen() {
       </ScrollView>
 
       <View style={styles.fabWrap}>
-        {customHabits.length === 0 ? (
+        {customHabits.length === 0 && !isDarkMode ? (
           <Animated.View
             pointerEvents="none"
             style={[

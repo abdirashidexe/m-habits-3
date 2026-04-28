@@ -14,6 +14,7 @@
     "home": "الرئيسية",
     "habits": "العادات",
     "stats": "الإحصائيات",
+    "analytics": "التحليلات",
     "profile": "الملف"
   },
   "home": {
@@ -65,6 +66,9 @@
   "stats": {
     "title": "تأمّل تاريخك.",
     "subtitle": "تأمّل، لا تكراراً بلا معنى.",
+    "analyticsTitle": "التحليلات",
+    "analyticsSubtitle": "تأمّل تاريخك.",
+    "historyTitle": "السجل",
     "yourStreaks": "اتساقك",
     "noStreaks": "لا عادات لتتبع بعد",
     "longest": "أطول سلسلة {{count}} يوم",
@@ -87,6 +91,13 @@
     "dayLetterThu": "خ",
     "dayLetterFri": "ج",
     "dayLetterSat": "س",
+    "legendAllDone": "اكتمل كله",
+    "legendPartial": "جزئي",
+    "legendMissed": "فائت",
+    "legendNoHabits": "لا عادات",
+    "prevMonthA11y": "الشهر السابق",
+    "nextMonthA11y": "الشهر التالي",
+    "fullHistoryUpsell": "شاهد تاريخك كاملاً مع فجر+ - كل شهر، منذ اليوم الأول.",
     "plusTitle": "فجر بلس",
     "plusHint": "الخطة المجانية تعرض هذا الأسبوع. بلس يضيف تاريخاً أعمق."
   },
