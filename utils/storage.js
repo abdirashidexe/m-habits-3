@@ -6,6 +6,7 @@ export const KEYS = {
   userProfile: 'fajr_user_profile',
   onboarded: 'fajr_onboarded',
   masterNotifications: 'fajr_master_notifications',
+  installDate: 'fajr_install_date',
   devDate: 'fajr_dev_date',
 };
 

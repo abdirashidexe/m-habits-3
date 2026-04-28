@@ -22,20 +22,19 @@ export const lightColors = {
 };
 
 export const darkColors = {
-  /** Slightly olive-tinted scrim over the deep canvas */
-  overlay: 'rgba(20, 28, 18, 0.55)',
-  /** Deep forest olive canvas — same family as light primary, anchored to #283618 */
+  /** Neutral scrim so dark mode does not inherit an olive cast across themes. */
+  overlay: 'rgba(18, 18, 20, 0.55)',
+  /** Dark surfaces are theme-specific; see getColors(mode='dark', theme). */
   background: '#12110F',
   surface: '#1A1815',
   surfaceElevated: '#211E1A',
-  /** Lifted sage for controls on dark olive (readable vs #283618 / surfaces) */
   primary: '#a3b06e',
   primaryLight: '#b8c489',
   accent: '#D2A35A',
   textPrimary: '#EEF1E6',
-  textSecondary: '#C5CBB8',
-  textMuted: '#8E9580',
-  divider: '#3d4a34',
+  textSecondary: '#C8C5BE',
+  textMuted: '#8F8A81',
+  divider: '#34312D',
   success: '#a3b06e',
   danger: '#b03333',
   plusGold: '#D2A35A',
@@ -46,12 +45,87 @@ export const darkColors = {
 /** @type {ColorThemeId[]} */
 export const COLOR_THEME_IDS = ['main', 'pink', 'blue', 'red', 'orange', 'purple', 'brown', 'gray'];
 
+const DARK_THEME_SURFACES = {
+  main: {
+    background: '#0f1510',
+    surface: '#161f17',
+    surfaceElevated: '#1c2a1e',
+    divider: '#2a3d2c',
+    primary: '#5c7a5f',
+    primaryLight: '#7a9e7e',
+  },
+  pink: {
+    background: '#150f13',
+    surface: '#1f161d',
+    surfaceElevated: '#2a1c27',
+    divider: '#3d2a38',
+    primary: '#9e5c7a',
+    primaryLight: '#c47a9e',
+  },
+  blue: {
+    background: '#0f1215',
+    surface: '#161a1f',
+    surfaceElevated: '#1c222a',
+    divider: '#2a333d',
+    primary: '#5c7a9e',
+    primaryLight: '#7a9ec4',
+  },
+  red: {
+    background: '#150f0f',
+    surface: '#1f1616',
+    surfaceElevated: '#2a1c1c',
+    divider: '#3d2a2a',
+    primary: '#9e5c5c',
+    primaryLight: '#c47a7a',
+  },
+  orange: {
+    background: '#150f0a',
+    surface: '#1f1610',
+    surfaceElevated: '#2a1e14',
+    divider: '#3d2e1a',
+    primary: '#9e7a5c',
+    primaryLight: '#c49e7a',
+  },
+  purple: {
+    background: '#110f15',
+    surface: '#191620',
+    surfaceElevated: '#211c2a',
+    divider: '#312a3d',
+    primary: '#7a5c9e',
+    primaryLight: '#9e7ac4',
+  },
+  brown: {
+    background: '#120f0d',
+    surface: '#1c1713',
+    surfaceElevated: '#261f19',
+    divider: '#3a2e26',
+    primary: '#9e7a5c',
+    primaryLight: '#c4a07a',
+  },
+  gray: {
+    background: '#0f0f0f',
+    surface: '#171717',
+    surfaceElevated: '#202020',
+    divider: '#2e2e2e',
+    primary: '#7a7a7a',
+    primaryLight: '#9e9e9e',
+  },
+};
+
 /**
  * @param {'light' | 'dark'} mode
  * @param {ColorThemeId} [colorTheme]
  */
 export function getColors(mode = 'light', colorTheme = 'main') {
   const base = mode === 'dark' ? { ...darkColors } : { ...lightColors };
+  if (mode === 'dark') {
+    const patch = DARK_THEME_SURFACES[colorTheme] || DARK_THEME_SURFACES.main;
+    return {
+      ...base,
+      ...patch,
+      success: patch.primary,
+    };
+  }
   if (colorTheme === 'pink') {
     const patch =
       mode === 'dark'

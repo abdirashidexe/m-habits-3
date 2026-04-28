@@ -18,7 +18,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Button } from '../../components/Button';
-import { DevToolsSection } from '../../components/DevToolsSection';
 import { PlusBadge } from '../../components/PlusBadge';
 import { ThemedMessageModal } from '../../components/ThemedMessageModal';
 import { ThemedSwitch } from '../../components/ThemedSwitch';
@@ -40,6 +39,8 @@ export default function ProfileScreen() {
   const [nameDraft, setNameDraft] = useState(state.userProfile.name);
   const [dialog, setDialog] = useState(null);
   const nameOpacity = useRef(new Animated.Value(1)).current;
+  const devTapCountRef = useRef(0);
+  const devTapResetRef = useRef(/** @type {null | ReturnType<typeof setTimeout>} */ (null));
 
   const nameFadeMs = 150;
   const nameFadeEasing = Easing.in(Easing.linear);
@@ -108,14 +109,6 @@ export default function ProfileScreen() {
     router.push('/modals/paywall');
   };
 
-  const reminderDefaults = () => {
-    setDialog({
-      title: t('profile.reminderDefaultsTitle'),
-      message: t('profile.reminderDefaultsMsg'),
-      actions: [{ label: t('common.ok'), variant: 'primary' }],
-    });
-  };
-
   const resetData = () => {
     setDialog({
       title: t('profile.resetTitle'),
@@ -148,6 +141,22 @@ export default function ProfileScreen() {
         },
       ],
     });
+  };
+
+  const onVersionTap = () => {
+    if (!__DEV__) return;
+    devTapCountRef.current += 1;
+    if (devTapResetRef.current) clearTimeout(devTapResetRef.current);
+    devTapResetRef.current = setTimeout(() => {
+      devTapCountRef.current = 0;
+      devTapResetRef.current = null;
+    }, 3000);
+    if (devTapCountRef.current >= 7) {
+      devTapCountRef.current = 0;
+      if (devTapResetRef.current) clearTimeout(devTapResetRef.current);
+      devTapResetRef.current = null;
+      router.push('/modals/dev-tools');
+    }
   };
 
   return (
@@ -222,6 +231,23 @@ export default function ProfileScreen() {
 
         <Text style={[typography.heading, styles.section]}>{t('profile.settings')}</Text>
         <Pressable
+          style={[styles.row, styles.cardRow, !plus && styles.rowLocked]}
+          onPress={() => {
+            if (plus) router.push('/modals/backup-restore');
+            else router.push('/modals/paywall');
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t('profile.backupRestore')}
+        >
+          <Text style={[typography.body, styles.rowLbl]}>
+            <FontAwesome6 name="cloud-arrow-up" size={16} color={colors.textPrimary} /> {t('profile.backupRestore')}
+          </Text>
+          <View style={styles.rowRight}>
+            {!plus ? <PlusBadge compact /> : null}
+            <Text style={[typography.caption, styles.chev]}>›</Text>
+          </View>
+        </Pressable>
+        <Pressable
           style={[styles.row, styles.cardRow]}
           onPress={() => router.push('/modals/customization')}
         >
@@ -242,55 +268,34 @@ export default function ProfileScreen() {
             onValueChange={(v) => dispatch({ type: ActionTypes.SET_MASTER_NOTIFICATIONS, payload: v })}
           />
         </View>
-        <Pressable style={[styles.row, styles.cardRow]} onPress={reminderDefaults}>
-          <Text style={[typography.body, styles.rowLbl]}>{t('profile.reminderDefaults')}</Text>
-          <Text style={[typography.caption, styles.chev]}>›</Text>
-        </Pressable>
-        <Pressable style={[styles.row, styles.cardRow]} onPress={resetData}>
-          <Text style={[typography.body, styles.danger]}>{t('profile.resetAll')}</Text>
-        </Pressable>
         <Text style={[typography.bodySmall, styles.localDataDisclaimer]}>
           {t('profile.localDataDisclaimer')}
         </Text>
 
         <Text style={[typography.heading, styles.section]}>{t('profile.about')}</Text>
-        <View style={[styles.about, shadows.card]}>
-          <Text style={[typography.caption, styles.ver]}>{t('common.version', { v: version })}</Text>
-          <Text style={[typography.bodySmall, styles.aboutTxt]}>{t('profile.aboutBody')}</Text>
-          <Pressable onPress={() => void Linking.openURL('https://abdirashidexe.github.io/m-habits-3/')}>
-            <Text style={[typography.caption, styles.link]}>{t('profile.privacyLink')}</Text>
+        <View style={[styles.aboutCard, shadows.card]}>
+          <Pressable onPress={onVersionTap} accessibilityRole="button" accessibilityLabel={t('common.version', { v: version })}>
+            <Text style={[typography.subheading, styles.aboutTitle]}>Fajr · v{version}</Text>
           </Pressable>
+          <Text style={[typography.bodySmall, styles.aboutTxt]}>{t('profile.aboutCardBody')}</Text>
+          <Pressable
+            onPress={() => void Linking.openURL('https://abdirashidexe.github.io/m-habits-3/')}
+            style={styles.aboutRow}
+            accessibilityRole="button"
+            accessibilityLabel={t('profile.privacyLink')}
+          >
+            <Text style={[typography.body, styles.aboutRowTxt]}>{t('profile.privacyLink')}</Text>
+            <Text style={[typography.caption, styles.chev]}>›</Text>
+          </Pressable>
+          <View style={styles.aboutRow}>
+            <Text style={[typography.body, styles.aboutRowTxt]}>{t('profile.attribution')}</Text>
+            <View style={{ width: 20 }} />
+          </View>
         </View>
 
-        {__DEV__ && state.devUiModeActive ? (
-          <View style={styles.devInline}>
-            <DevToolsSection />
-          </View>
-        ) : null}
-        {__DEV__ ? (
-          <Pressable
-            onPress={() =>
-              dispatch({
-                type: ActionTypes.SET_DEV_UI_MODE_ACTIVE,
-                payload: !state.devUiModeActive,
-              })
-            }
-            style={({ pressed }) => [
-              styles.devToggle,
-              shadows.card,
-              pressed && styles.devTogglePressed,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={
-              state.devUiModeActive ? t('devTools.exitDevMode') : t('devTools.enterDevMode')
-            }
-          >
-            <Text style={[typography.body, styles.devToggleTxt]}>
-              {state.devUiModeActive ? t('devTools.exitDevMode') : t('devTools.enterDevMode')}
-            </Text>
-          </Pressable>
-        ) : null}
-
+        <Pressable style={[styles.row, styles.cardRow, { marginTop: spacing.xl }]} onPress={resetData}>
+          <Text style={[typography.body, styles.danger]}>{t('profile.resetAll')}</Text>
+        </Pressable>
         <View style={{ height: spacing.xxl }} />
       </ScrollView>
 
@@ -443,9 +448,17 @@ function makeStyles({ colors, radii, spacing }) {
     rowLbl: {
       color: colors.textPrimary,
     },
+    rowRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+    },
     chev: {
       color: colors.textMuted,
       fontSize: 22,
+    },
+    rowLocked: {
+      opacity: 0.6,
     },
     danger: {
       color: colors.danger,
@@ -456,47 +469,38 @@ function makeStyles({ colors, radii, spacing }) {
       paddingHorizontal: spacing.md,
       marginTop: spacing.xs,
       marginBottom: spacing.md,
+      textAlign: 'center',
       lineHeight: 20,
     },
-    about: {
+    aboutCard: {
       backgroundColor: colors.surface,
       borderRadius: radii.lg,
       padding: spacing.md,
       borderWidth: 1,
       borderColor: colors.divider,
     },
-    ver: {
-      color: colors.textMuted,
+    aboutTitle: {
+      color: colors.textPrimary,
+      textAlign: 'center',
       marginBottom: spacing.sm,
     },
     aboutTxt: {
       color: colors.textSecondary,
       lineHeight: 22,
       marginBottom: spacing.md,
+      textAlign: 'center',
     },
-    link: {
-      color: colors.primary,
-      textDecorationLine: 'underline',
-    },
-    devInline: {
-      marginTop: spacing.md,
-    },
-    devToggle: {
-      marginTop: spacing.md,
-      paddingVertical: spacing.md,
-      paddingHorizontal: spacing.md,
-      borderRadius: radii.md,
-      backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.divider,
+    aboutRow: {
+      flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: colors.divider,
     },
-    devTogglePressed: {
-      opacity: 0.92,
-    },
-    devToggleTxt: {
+    aboutRowTxt: {
       color: colors.textPrimary,
-      fontWeight: '600',
+      flex: 1,
     },
   });
 }

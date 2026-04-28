@@ -1,6 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -12,6 +13,8 @@ import { useTranslation } from 'react-i18next';
 import { AppProvider, useApp } from '../context/AppContext';
 import { useFajrTheme } from '../hooks/useFajrTheme';
 import { initializePurchases } from '../utils/purchases';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   useEffect(() => {
@@ -34,6 +37,7 @@ export default function RootLayout() {
 }
 
 function RootLayoutInner() {
+  const { state } = useApp();
   const { mode, colors, spacing } = useFajrTheme();
   const styles = makeStyles({ colors, spacing });
   const navigationTheme = useMemo(() => {
@@ -51,6 +55,18 @@ function RootLayoutInner() {
       },
     };
   }, [mode, colors.background, colors.surface, colors.textPrimary, colors.divider, colors.primary]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
+    (async () => {
+      try {
+        await SplashScreen.hideAsync();
+      } catch {
+        // Best-effort hide; avoid crashing the app on edge cases.
+      }
+    })();
+  }, [state.hydrated]);
+
   return (
     <View style={styles.root}>
       <ThemeProvider value={navigationTheme}>

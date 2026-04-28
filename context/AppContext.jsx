@@ -25,6 +25,10 @@ import {
   rescheduleAllHabitReminders,
   setupAndroidNotificationChannel,
   cancelAllLocalNotifications,
+  scheduleWeeklyReportNotification,
+  cancelScheduledNotification,
+  scheduleDailySmartNotifications,
+  cancelDailySmartNotifications,
 } from '../utils/notifications';
 
 /**
@@ -110,13 +114,14 @@ export function AppProvider({ children }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [habits, habitLogs, userProfileRaw, onboardedRaw, masterRaw, devDateRaw] =
+      const [habits, habitLogs, userProfileRaw, onboardedRaw, masterRaw, installDateRaw, devDateRaw] =
         await Promise.all([
           storage.readJson(storage.KEYS.habits, []),
           storage.readJson(storage.KEYS.habitLogs, []),
           storage.readJson(storage.KEYS.userProfile, null),
           storage.readJson(storage.KEYS.onboarded, 'false'),
           storage.readJson(storage.KEYS.masterNotifications, 'true'),
+          storage.readJson(storage.KEYS.installDate, null),
           storage.readJson(storage.KEYS.devDate, null),
         ]);
       if (cancelled) return;
@@ -126,6 +131,11 @@ export function AppProvider({ children }) {
             .map(migrateHabitFromStorage)
             .filter((h) => h && typeof h.id === 'string')
         : [];
+      let installDate = typeof installDateRaw === 'string' ? installDateRaw : null;
+      if (!installDate) {
+        installDate = new Date().toISOString();
+        void storage.writeJson(storage.KEYS.installDate, installDate);
+      }
       const devDateRawStr = typeof devDateRaw === 'string' ? devDateRaw : null;
       // Dev date override must never affect release builds (e.g. leftover AsyncStorage from dev).
       const devDateOverride = __DEV__ ? devDateRawStr : null;
@@ -141,6 +151,7 @@ export function AppProvider({ children }) {
           userProfile,
           onboarded: onboardedRaw === 'true',
           masterNotificationsEnabled: masterRaw !== 'false',
+          installDate,
           devDateOverride,
         },
       });
@@ -197,6 +208,24 @@ export function AppProvider({ children }) {
     if (!state.hydrated) return;
     syncReminders();
   }, [state.hydrated, syncReminders]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
+    if (state.onboarded && state.masterNotificationsEnabled) {
+      scheduleWeeklyReportNotification();
+    } else {
+      void cancelScheduledNotification('weekly-report-sunday');
+    }
+  }, [state.hydrated, state.onboarded, state.masterNotificationsEnabled]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
+    if (state.onboarded && state.masterNotificationsEnabled) {
+      scheduleDailySmartNotifications();
+    } else {
+      void cancelDailySmartNotifications();
+    }
+  }, [state.hydrated, state.onboarded, state.masterNotificationsEnabled]);
 
   const value = useMemo(() => buildContextValue(state, dispatch), [state]);
 

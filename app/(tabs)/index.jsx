@@ -7,11 +7,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HabitCard } from '../../components/HabitCard';
 import { HabitCompletionRitual } from '../../components/HabitCompletionRitual';
-import { MOTIVATION_QUOTE_COUNT } from '../../constants/motivation';
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
+import { generateDailyInsight } from '../../utils/insights';
 import { getDateFnsLocale } from '../../utils/dateLocale';
-import { formatDateDisplay, formatHijriDisplay, getDayOfYear, toLocalDateString } from '../../utils/dates';
+import { formatDateDisplay, formatHijriDisplay, toLocalDateString } from '../../utils/dates';
 import { now, nowIso } from '../../utils/now';
 import { isHabitDueOnDate } from '../../utils/streak';
 
@@ -133,11 +133,10 @@ export default function HomeScreen() {
     if (prevAllDueDone !== allDueDone) setPrevAllDueDone(allDueDone);
   }, [allDueDone, prevAllDueDone]);
 
-  const quoteIdx = Math.abs(getDayOfYear(today)) % MOTIVATION_QUOTE_COUNT;
-  const quote = {
-    text: t(`motivation.${quoteIdx}.text`),
-    source: t(`motivation.${quoteIdx}.source`),
-  };
+  const insight = useMemo(
+    () => generateDailyInsight(state.habits, state.habitLogs, today),
+    [state.habits, state.habitLogs, today]
+  );
   const greetKey =
     greetingPeriod(today) === 'morning'
       ? 'home.greetMorning'
@@ -231,8 +230,21 @@ export default function HomeScreen() {
         </View>
 
         <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.sm }]}>
-          <Text style={[typography.bodySmall, styles.quote]}>{quote.text}</Text>
-          <Text style={[typography.caption, styles.quoteSrc]}>{quote.source}</Text>
+          <View style={styles.insightCard}>
+            {!state.userProfile.isPlus ? (
+              <View style={styles.plusPill} accessibilityElementsHidden>
+                <Text style={[typography.caption, styles.plusPillTxt]}>✦ Fajr+</Text>
+              </View>
+            ) : null}
+            <Text style={[typography.heading, styles.insightArabic]}>{insight.arabic}</Text>
+            <Text style={[typography.bodySmall, styles.insightTranslation]}>{insight.translation}</Text>
+            {state.userProfile.isPlus && insight.message ? (
+              <Text style={[typography.caption, styles.insightMsg]}>{insight.message}</Text>
+            ) : null}
+          </View>
+          {/* Keep static quote data in codebase for later reuse */}
+          {/* <Text style={[typography.bodySmall, styles.quote]}>{quote.text}</Text>
+          <Text style={[typography.caption, styles.quoteSrc]}>{quote.source}</Text> */}
         </View>
       </ScrollView>
     </View>
@@ -352,8 +364,38 @@ function makeStyles({ colors, radii, spacing }) {
     footer: {
       marginTop: spacing.md,
       paddingTop: spacing.sm,
-      borderTopWidth: 1,
-      borderTopColor: colors.divider,
+    },
+    insightCard: {
+      paddingVertical: spacing.xs,
+      paddingHorizontal: 0,
+      position: 'relative',
+    },
+    plusPill: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+    },
+    plusPillTxt: {
+      color: colors.plusGold,
+      fontWeight: '700',
+    },
+    insightArabic: {
+      color: colors.textPrimary,
+      textAlign: 'center',
+      writingDirection: 'rtl',
+      marginBottom: spacing.sm,
+      lineHeight: 28,
+    },
+    insightTranslation: {
+      color: colors.textSecondary,
+      textAlign: 'center',
+      lineHeight: 20,
+    },
+    insightMsg: {
+      color: colors.textMuted,
+      textAlign: 'center',
+      marginTop: spacing.sm,
+      lineHeight: 18,
     },
     quote: {
       color: colors.textSecondary,

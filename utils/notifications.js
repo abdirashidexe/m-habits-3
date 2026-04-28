@@ -165,3 +165,104 @@ export async function setupAndroidNotificationChannel() {
     }
   }
 }
+
+/**
+ * Cancel one scheduled notification by identifier.
+ * @param {string} identifier
+ * @returns {Promise<void>}
+ */
+export async function cancelScheduledNotification(identifier) {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(identifier);
+  } catch {
+    // Best-effort cancel.
+  }
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+export async function cancelDailySmartNotifications() {
+  await cancelScheduledNotification('daily-morning-check');
+  await cancelScheduledNotification('daily-evening-check');
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+export async function scheduleDailySmartNotifications() {
+  await cancelDailySmartNotifications();
+  try {
+    const trigger = {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
+      channelId: Platform.OS === 'android' ? 'fajr-default' : undefined,
+      hour: 7,
+      minute: 0,
+    };
+    await Notifications.scheduleNotificationAsync({
+      identifier: 'daily-morning-check',
+      content: {
+        title: i18n.t('notifications.morningTitle'),
+        body: i18n.t('notifications.morningBody'),
+      },
+      trigger,
+    });
+  } catch (e) {
+    if (__DEV__) {
+      console.warn('[Notifications] morning schedule failed', e?.message ?? e);
+    }
+  }
+
+  try {
+    const trigger = {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
+      channelId: Platform.OS === 'android' ? 'fajr-default' : undefined,
+      hour: 21,
+      minute: 0,
+    };
+    await Notifications.scheduleNotificationAsync({
+      identifier: 'daily-evening-check',
+      content: {
+        title: i18n.t('notifications.eveningTitle'),
+        body: i18n.t('notifications.eveningBody'),
+      },
+      trigger,
+    });
+  } catch (e) {
+    if (__DEV__) {
+      console.warn('[Notifications] evening schedule failed', e?.message ?? e);
+    }
+  }
+}
+
+/**
+ * @returns {Promise<void>}
+ */
+export async function scheduleWeeklyReportNotification() {
+  try {
+    await cancelScheduledNotification('weekly-report-sunday');
+  } catch {
+    // best-effort cancel
+  }
+  try {
+    const trigger = {
+      type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
+      channelId: Platform.OS === 'android' ? 'fajr-default' : undefined,
+      weekday: 1, // Sunday (Expo: 1=Sun..7=Sat)
+      hour: 8,
+      minute: 0,
+    };
+    await Notifications.scheduleNotificationAsync({
+      identifier: 'weekly-report-sunday',
+      content: {
+        title: i18n.t('notifications.weeklyReportTitle'),
+        body: i18n.t('notifications.weeklyReportBody'),
+      },
+      trigger,
+    });
+  } catch (e) {
+    if (__DEV__) {
+      console.warn('[Notifications] weekly report schedule failed', e?.message ?? e);
+    }
+  }
+}

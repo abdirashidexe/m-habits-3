@@ -14,7 +14,7 @@ import { Button } from './Button';
  *     actions: {
  *       label: string,
  *       onPress?: () => void | Promise<void>,
- *       variant?: 'primary' | 'secondary' | 'ghost',
+ *       variant?: 'primary' | 'secondary' | 'ghost' | 'danger',
  *       dismiss?: boolean,
  *     }[],
  *   },
@@ -41,16 +41,34 @@ export function ThemedMessageModal({ dialog, onDismiss }) {
           <Text style={[typography.body, styles.message]}>{dialog.message}</Text>
           <View style={styles.actions}>
             {dialog.actions.map((action, index) => (
-              <Button
-                key={`${action.label}-${index}`}
-                title={action.label}
-                variant={action.variant || 'primary'}
-                onPress={() => {
-                  void action.onPress?.();
-                  if (action.dismiss !== false) onDismiss();
-                }}
-                style={styles.btn}
-              />
+              action.variant === 'danger' ? (
+                <Pressable
+                  key={`${action.label}-${index}`}
+                  onPress={() => {
+                    void action.onPress?.();
+                    if (action.dismiss !== false) onDismiss();
+                  }}
+                  style={({ pressed }) => [
+                    styles.dangerBtn,
+                    pressed && styles.dangerBtnPressed,
+                    styles.btn,
+                  ]}
+                  accessibilityRole="button"
+                >
+                  <Text style={[typography.body, styles.dangerBtnTxt]}>{action.label}</Text>
+                </Pressable>
+              ) : (
+                <Button
+                  key={`${action.label}-${index}`}
+                  title={action.label}
+                  variant={action.variant || 'primary'}
+                  onPress={() => {
+                    void action.onPress?.();
+                    if (action.dismiss !== false) onDismiss();
+                  }}
+                  style={styles.btn}
+                />
+              )
             ))}
           </View>
         </Pressable>
@@ -93,6 +111,24 @@ function makeStyles({ colors, spacing, radii }) {
     },
     btn: {
       alignSelf: 'stretch',
+    },
+    dangerBtn: {
+      borderRadius: radii.xl,
+      paddingVertical: spacing.sm + 2,
+      paddingHorizontal: spacing.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.danger,
+      borderWidth: 1,
+      borderColor: colors.danger,
+    },
+    dangerBtnPressed: {
+      opacity: 0.88,
+    },
+    dangerBtnTxt: {
+      color: '#ffffff',
+      fontWeight: '600',
+      textAlign: 'center',
     },
   });
 }

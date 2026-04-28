@@ -9,6 +9,7 @@ import { ThemedSwitch } from '../../components/ThemedSwitch';
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { COLOR_THEME_IDS, getColors } from '../../theme';
+import { isThemeGracePeriodActive } from '../../utils/launch';
 
 export default function CustomizationModal() {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ export default function CustomizationModal() {
   const darkMode = Boolean(state.userProfile.darkMode);
   const mode = darkMode ? 'dark' : 'light';
   const selected = state.userProfile.colorTheme || 'main';
+  const themesAreFree = isThemeGracePeriodActive(state.installDate) || state.userProfile.isPlus;
 
   const options = useMemo(
     () =>
@@ -29,8 +31,9 @@ export default function CustomizationModal() {
         label: t(`appColors.${id}`),
         preview: getColors(mode, id),
         isOn: selected === id,
+        locked: !themesAreFree && id !== 'main',
       })),
-    [mode, selected, t]
+    [mode, selected, t, themesAreFree]
   );
 
   return (
@@ -61,20 +64,39 @@ export default function CustomizationModal() {
 
         <View style={styles.sectionSpacer} />
         <Text style={[typography.heading, styles.section]}>{t('profile.appColors')}</Text>
+        {!themesAreFree ? (
+          <View style={styles.lockBanner}>
+            <Text style={[typography.caption, styles.lockBannerTxt]}>
+              {t('appColors.themesPlusAfterGrace')}
+            </Text>
+          </View>
+        ) : null}
         <View style={styles.swatchGrid}>
-          {options.map(({ id, label, preview, isOn }) => (
+          {options.map(({ id, label, preview, isOn, locked }) => (
             <Pressable
               key={id}
-              onPress={() => dispatch({ type: ActionTypes.SET_COLOR_THEME, payload: id })}
+              onPress={() => {
+                if (locked) {
+                  router.push('/modals/paywall');
+                  return;
+                }
+                dispatch({ type: ActionTypes.SET_COLOR_THEME, payload: id });
+              }}
               style={({ pressed }) => [
                 styles.swatchItem,
                 shadows.card,
                 isOn && styles.swatchItemOn,
                 pressed && styles.swatchItemPressed,
+                locked && styles.swatchLocked,
               ]}
               accessibilityRole="button"
               accessibilityLabel={label}
             >
+              {locked ? (
+                <View style={styles.lockIcon} accessibilityElementsHidden>
+                  <FontAwesome6 name="lock" size={14} color={colors.textMuted} />
+                </View>
+              ) : null}
               <View
                 style={[
                   styles.halfCircleWrap,
@@ -137,6 +159,21 @@ function makeStyles({ colors, spacing, radii }) {
     sectionSpacer: {
       marginTop: spacing.md,
     },
+    lockBanner: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.plusGold,
+      borderRadius: radii.lg,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      marginBottom: spacing.md,
+    },
+    lockBannerTxt: {
+      color: colors.textPrimary,
+      textAlign: 'center',
+      lineHeight: 18,
+      fontWeight: '600',
+    },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -169,6 +206,7 @@ function makeStyles({ colors, spacing, radii }) {
       paddingVertical: spacing.md,
       paddingHorizontal: spacing.sm,
       alignItems: 'center',
+      position: 'relative',
     },
     swatchItemOn: {
       backgroundColor: colors.surfaceElevated,
@@ -176,6 +214,15 @@ function makeStyles({ colors, spacing, radii }) {
     },
     swatchItemPressed: {
       opacity: 0.92,
+    },
+    swatchLocked: {
+      opacity: 0.75,
+    },
+    lockIcon: {
+      position: 'absolute',
+      top: spacing.sm,
+      right: spacing.sm,
+      zIndex: 2,
     },
     halfCircleWrap: {
       width: 44,

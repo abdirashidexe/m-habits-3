@@ -9,6 +9,9 @@ export default function ModalsLayout() {
         gestureEnabled: true,
         animation: 'slide_from_bottom',
       }}
-    />
+    >
+      <Stack.Screen name="backup-restore" />
+      <Stack.Screen name="weekly-report" />
+    </Stack>
   );
 }

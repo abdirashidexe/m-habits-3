@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { COLOR_THEME_IDS, getColors } from '../../theme';
+import { isThemeGracePeriodActive } from '../../utils/launch';
 
 export default function AppColorsModal() {
   const { t } = useTranslation();
@@ -22,6 +24,7 @@ export default function AppColorsModal() {
   const styles = makeStyles({ colors, spacing, radii });
   const mode = state.userProfile.darkMode ? 'dark' : 'light';
   const selected = state.userProfile.colorTheme || 'main';
+  const themesAreFree = isThemeGracePeriodActive(state.installDate) || state.userProfile.isPlus;
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
@@ -33,14 +36,29 @@ export default function AppColorsModal() {
         <View style={styles.topSpacer} />
       </View>
 
+      {!themesAreFree ? (
+        <View style={styles.lockBanner}>
+          <Text style={[typography.caption, styles.lockBannerTxt]}>
+            {t('appColors.themesPlusAfterGrace')}
+          </Text>
+        </View>
+      ) : null}
+
       <View style={styles.cardsRow}>
         {OPTIONS.map(({ id, label, defaultNote }) => {
           const preview = getColors(mode, id);
           const isOn = selected === id;
+          const locked = !themesAreFree && id !== 'main';
           return (
             <Pressable
               key={id}
-              onPress={() => dispatch({ type: ActionTypes.SET_COLOR_THEME, payload: id })}
+              onPress={() => {
+                if (locked) {
+                  router.push('/modals/paywall');
+                  return;
+                }
+                dispatch({ type: ActionTypes.SET_COLOR_THEME, payload: id });
+              }}
               style={[
                 styles.card,
                 isOn && styles.cardSelected,
@@ -51,9 +69,14 @@ export default function AppColorsModal() {
                 <View style={[styles.swatch, { backgroundColor: preview.primary }]} />
                 <View style={[styles.swatch, { backgroundColor: preview.primaryLight }]} />
               </View>
-              <Text style={[typography.subheading, styles.cardTitle, { color: colors.textPrimary }]}>
-                {label}
-              </Text>
+              <View style={styles.cardTitleRow}>
+                <Text style={[typography.subheading, styles.cardTitle, { color: colors.textPrimary }]}>
+                  {label}
+                </Text>
+                {locked ? (
+                  <FontAwesome6 name="lock" size={14} color={colors.textMuted} style={styles.lockIcon} />
+                ) : null}
+              </View>
               {defaultNote ? (
                 <Text style={[typography.caption, { color: colors.textMuted }]}>
                   {t('appColors.default')}
@@ -96,6 +119,21 @@ function makeStyles({ colors, spacing, radii }) {
     closeTxt: {
       color: colors.textSecondary,
     },
+    lockBanner: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.plusGold,
+      borderRadius: radii.lg,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      marginBottom: spacing.md,
+    },
+    lockBannerTxt: {
+      color: colors.textPrimary,
+      textAlign: 'center',
+      lineHeight: 18,
+      fontWeight: '600',
+    },
     cardsRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -132,6 +170,15 @@ function makeStyles({ colors, spacing, radii }) {
     },
     cardTitle: {
       textAlign: 'center',
+    },
+    cardTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 6,
+    },
+    lockIcon: {
+      marginTop: 1,
     },
   });
 }

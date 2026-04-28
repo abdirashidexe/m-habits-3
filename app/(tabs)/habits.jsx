@@ -12,6 +12,7 @@ import {
     View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { differenceInCalendarDays, parseISO, isValid } from 'date-fns';
 
 import { EmptyState } from '../../components/EmptyState';
 import { ThemedMessageModal } from '../../components/ThemedMessageModal';
@@ -19,7 +20,6 @@ import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { cancelHabitReminder } from '../../utils/notifications';
 import { now } from '../../utils/now';
-import { calculateStreak } from '../../utils/streak';
 
 export default function HabitsScreen() {
   const MAX_FREE_HABITS = 3;
@@ -99,7 +99,7 @@ export default function HabitsScreen() {
         { label: t('common.cancel'), variant: 'secondary' },
         {
           label: t('common.delete'),
-          variant: 'primary',
+          variant: 'danger',
           onPress: async () => {
             await cancelHabitReminder(h.id);
             dispatch({ type: ActionTypes.DELETE_HABIT, payload: h.id });
@@ -180,7 +180,12 @@ export default function HabitsScreen() {
 
         {customHabits.map((h, index) => {
             const locked = !plus && index >= MAX_FREE_HABITS;
-            const streak = calculateStreak(h.id, state.habitLogs, h, now());
+            const createdAt = typeof h.createdAt === 'string' ? parseISO(h.createdAt) : null;
+            const ageDays =
+              createdAt && isValid(createdAt)
+                ? differenceInCalendarDays(now(), createdAt) + 1
+                : null;
+            const showAge = typeof ageDays === 'number' && ageDays < 7;
             const RowWrap = locked ? Pressable : View;
             const rowWrapProps = locked
               ? { onPress: () => openEdit(h, true), accessibilityRole: 'button' }
@@ -196,9 +201,11 @@ export default function HabitsScreen() {
                     <Text style={[typography.subheading, styles.name]}>{h.name}</Text>
                   </View>
                   <Text style={[typography.caption, styles.meta]}>{freqLabel(h)}</Text>
-                  <Text style={[typography.caption, styles.streak]}>
-                    {t('habits.streak', { count: streak.currentStreak })}
-                  </Text>
+                  {showAge ? (
+                    <Text style={[typography.caption, styles.age]}>
+                      🔥 {ageDays} days
+                    </Text>
+                  ) : null}
                 </View>
                 {locked ? (
                   <View style={styles.fajrPlusBadgeWrap} accessibilityElementsHidden>
@@ -399,7 +406,7 @@ function makeStyles({ colors, spacing, radii }) {
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
-  streak: {
+  age: {
     color: colors.textMuted,
     marginTop: 2,
   },

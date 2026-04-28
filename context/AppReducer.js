@@ -42,6 +42,7 @@ import { nowIso } from '../utils/now';
  * @property {UserProfile} userProfile
  * @property {boolean} onboarded
  * @property {boolean} masterNotificationsEnabled
+ * @property {string | null} installDate
  * @property {string | null} devDateOverride
  * @property {boolean} devUiModeActive
  * @property {boolean} hydrated
@@ -66,6 +67,7 @@ export const initialState = {
   userProfile: { ...defaultUserProfile },
   onboarded: false,
   masterNotificationsEnabled: true,
+  installDate: null,
   devDateOverride: null,
   devUiModeActive: false,
   hydrated: false,
@@ -80,6 +82,7 @@ export const ActionTypes = {
   SET_LANGUAGE: 'SET_LANGUAGE',
   SET_PLUS: 'SET_PLUS',
   SET_MASTER_NOTIFICATIONS: 'SET_MASTER_NOTIFICATIONS',
+  SET_INSTALL_DATE: 'SET_INSTALL_DATE',
   SET_DEV_DATE_OVERRIDE: 'SET_DEV_DATE_OVERRIDE',
   SET_DEV_UI_MODE_ACTIVE: 'SET_DEV_UI_MODE_ACTIVE',
   SET_HABITS: 'SET_HABITS',
@@ -178,6 +181,8 @@ export function appReducer(state, action) {
     }
     case ActionTypes.SET_MASTER_NOTIFICATIONS:
       return { ...state, masterNotificationsEnabled: Boolean(action.payload) };
+    case ActionTypes.SET_INSTALL_DATE:
+      return { ...state, installDate: action.payload ? String(action.payload) : null };
     case ActionTypes.SET_DEV_DATE_OVERRIDE:
       return { ...state, devDateOverride: action.payload ? String(action.payload) : null };
     case ActionTypes.SET_DEV_UI_MODE_ACTIVE:
