@@ -28,7 +28,8 @@
     "noHabitsDue": "Ma jiraan caadooyin maanta la filayo.",
     "addHabit": "Ku dar caado",
     "openProfile": "Fur profile",
-    "a11yAddHabit": "Ku dar caado"
+    "a11yAddHabit": "Ku dar caado",
+    "hijriDisclaimer": "Taariikh hijri adalah perkiraan dan dapat berbeda tergantung pada wilayah."
   },
   "habits": {
     "title": "Caadooyin",
@@ -236,8 +237,8 @@
     "languageHint": "Waxaad beddeli kartaa Profile mar kasta.",
     "trackTitle": "Soocyo caadooyinka",
     "trackBody": "Fajr wuxuu kaa soocyo caadooyinka iyo la isticmaalin.",
-    "sadaqahTitle": "Sadaqo ka sii fog",
-    "sadaqahBody": "Markaad doorato inaad bixiso, waxaad taageeri kartaa shaqada app-kan ka dambeysa oo aad gacan ka geysan kartaa gargaarka bini'aadamka ee dadka u baahan—labaduba waa siyaabo wanaagsan oo aad sadaqadaada ugu dhigto ficil.",
+    "sadaqahTitle": "Qabto ka sii fog",
+    "sadaqahBody": "Qabto kaaga waxaa loo qorayaa app-ka iyo la abuuro ka geysan kartaa gargaarka bini'aadamka ee dadka u baahan.",
     "nameQuestion": "Maxaan kuugu yeernaa?",
     "namePlaceholder": "Magacaaga",
     "getStarted": "Bilow",
@@ -249,7 +250,6 @@
     "main": "Aasaasi",
     "blue": "Buluug",
     "red": "Cas",
-    "orange": "Liin",
     "purple": "Buluug casaano",
     "brown": "Bunni",
     "gray": "Cawl madow",

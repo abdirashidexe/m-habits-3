@@ -2,9 +2,8 @@ import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { differenceInCalendarDays, isValid, parseISO, startOfDay } from 'date-fns';
 import { useFajrTheme } from '../hooks/useFajrTheme';
-import { calculateMonthlyConsistency, calculateStreak } from '../utils/streak';
+import { calculateStreak } from '../utils/streak';
 import { ConfettiBurst } from './ConfettiBurst';
 
 /**
@@ -34,25 +33,7 @@ export function HabitCard({
 
   const streakInfo = calculateStreak(habit.id, logs, habit, referenceDate);
   const atRisk = isEvening ? streakInfo.atRisk : false;
-  const consistency = calculateMonthlyConsistency(habit.id, logs, habit, referenceDate);
-  const created0 = startOfDay(parseISO(habit?.createdAt || ''));
-  const ref0 = startOfDay(referenceDate || new Date());
-  const historyDays = isValid(created0) ? differenceInCalendarDays(ref0, created0) + 1 : 9999;
-
-  let metaText = '';
-  let metaStyle = styles.metaText;
-  if (historyDays < 7) {
-    metaText = t('habitCard.daysInARow', { count: streakInfo.currentStreak });
-    metaStyle = styles.metaMuted;
-  } else if (consistency.isPerfect) {
-    metaText = t('habitCard.perfectMonth');
-    metaStyle = styles.metaPerfect;
-  } else {
-    metaText = t('habitCard.monthProgress', {
-      completed: consistency.completedDays,
-      due: consistency.dueDays,
-    });
-  }
+  const showRisk = atRisk && !completed;
 
   const handleToggle = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -78,12 +59,19 @@ export function HabitCard({
       />
       <View style={styles.row}>
         <View style={styles.info}>
-          <Text style={[typography.subheading, styles.name]}>{habit.name}</Text>
-          <View style={styles.meta}>
-            <Text style={[typography.caption, metaStyle]}>{metaText}</Text>
-            {atRisk && !completed ? (
-              <Text style={[typography.caption, styles.risk]}>{t('habitCard.atRisk')}</Text>
-            ) : null}
+          <View style={styles.textBlock}>
+            <Text style={[typography.subheading, styles.name]}>{habit.name}</Text>
+            <View style={styles.metaSlot}>
+              <Text
+                style={[
+                  typography.caption,
+                  styles.risk,
+                  !showRisk && styles.riskHidden,
+                ]}
+              >
+                {t('habitCard.atRisk')}
+              </Text>
+            </View>
           </View>
         </View>
         <Pressable
@@ -106,6 +94,8 @@ export function HabitCard({
 }
 
 function makeStyles({ colors, typography, spacing, radii }) {
+  const captionLineHeight = typography?.caption?.lineHeight ?? 16;
+  const controlSize = 46;
   return StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
@@ -123,40 +113,48 @@ function makeStyles({ colors, typography, spacing, radii }) {
     borderColor: colors.accent,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    position: 'relative',
+    minHeight: controlSize,
+    justifyContent: 'center',
   },
   info: {
-    flex: 1,
-    paddingRight: spacing.sm,
+    position: 'relative',
+    paddingLeft: 0,
+    paddingRight: controlSize + spacing.sm,
+  },
+  textBlock: {
+    position: 'relative',
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 360,
   },
   name: {
     color: colors.textPrimary,
+    textAlign: 'left',
   },
-  meta: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: spacing.xs,
-  },
-  metaText: {
-    color: colors.textSecondary,
-  },
-  metaMuted: {
-    color: colors.textMuted,
-    fontWeight: '400',
-  },
-  metaPerfect: {
-    color: colors.accent,
-    fontWeight: '700',
+  metaSlot: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: -20,
+    minHeight: captionLineHeight,
+    justifyContent: 'center',
   },
   risk: {
     color: colors.accent,
     fontWeight: '600',
+    textAlign: 'left',
+  },
+  riskHidden: {
+    opacity: 0,
   },
   check: {
-    width: 46,
-    height: 46,
+    position: 'absolute',
+    right: 0,
+    top: '50%',
+    transform: [{ translateY: -controlSize / 2 }],
+    width: controlSize,
+    height: controlSize,
     borderRadius: radii.lg,
     borderWidth: 2,
     borderColor: colors.divider,

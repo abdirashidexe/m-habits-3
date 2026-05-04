@@ -63,9 +63,9 @@ export function getDayIndex(date) {
  * @returns {number} 1-366 day of year
  */
 export function getDayOfYear(date) {
-  const start = new Date(date.getFullYear(), 0, 0);
-  const diff = startOfDay(date).getTime() - start.getTime();
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
+  const jan1 = new Date(date.getFullYear(), 0, 1);
+  const local = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  return Math.round((local - jan1) / (1000 * 60 * 60 * 24)) + 1;
 }
 
 const HIJRI_MONTH_NAMES = [
@@ -117,10 +117,11 @@ export function gregorianToHijri(gDate) {
   const y2 = 30 * n + j - 30;
 
   const monthIndex = Math.min(Math.max(m2 - 1, 0), 11);
+  const correctedDay = d2 - 1 || 30; // shift back by 1; if result is 0 wrap to 30
   return {
     year: y2,
     month: m2,
-    day: d2,
+    day: correctedDay,
     monthName: HIJRI_MONTH_NAMES[monthIndex],
   };
 }

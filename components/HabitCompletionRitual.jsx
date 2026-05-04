@@ -5,7 +5,6 @@ import {
   Easing,
   Modal,
   Platform,
-  UIManager,
   StyleSheet,
   Text,
   View,
@@ -46,6 +45,7 @@ export function HabitCompletionRitual({ visible, onFinished, titleText, subText,
   const particlesRef = useRef([]);
   const onFinishedRef = useRef(onFinished);
   onFinishedRef.current = onFinished;
+  const overlayOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     void AccessibilityInfo.isReduceMotionEnabled().then((isEnabled) => setReduceMotion(Boolean(isEnabled)));
@@ -56,6 +56,27 @@ export function HabitCompletionRitual({ visible, onFinished, titleText, subText,
       if (sub && typeof sub.remove === 'function') sub.remove();
     };
   }, []);
+
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      setModalVisible(true);
+      Animated.timing(overlayOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(overlayOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) setModalVisible(false);
+      });
+    }
+  }, [visible, overlayOpacity]);
 
   useEffect(() => {
     if (!visible) return;
@@ -139,22 +160,16 @@ export function HabitCompletionRitual({ visible, onFinished, titleText, subText,
     };
   }, [visible, reduceMotion, colors.primary, colors.accent, colors.plusGold, colors.success]);
 
-  if (!visible) return null;
-
   return (
-    <Modal visible transparent animationType="fade" statusBarTranslucent>
-      <View style={styles.overlay} pointerEvents="none">
-        {Platform.OS !== 'web' ? (
-          // Guard: BlurView can be unavailable in some runtimes (e.g. web / non-native clients)
-          <SafeBlur />
-        ) : null}
+<Modal visible={modalVisible} transparent animationType="none" statusBarTranslucent>
+        <Animated.View style={[styles.overlay, { opacity: overlayOpacity }]} pointerEvents="none">
+        {Platform.OS !== 'web' ? <SafeBlur /> : null}
         {showHeadline ? (
           <>
             <Text style={[typography.heading, styles.title]}>{titleText ?? t('ritual.title')}</Text>
             <Text style={[typography.body, styles.sub]}>{subText ?? t('ritual.sub')}</Text>
           </>
         ) : null}
-
         {!reduceMotion ? (
           <View style={styles.burst} key={renderTick}>
             {particlesRef.current.map((p) => (
@@ -172,7 +187,7 @@ export function HabitCompletionRitual({ visible, onFinished, titleText, subText,
             ))}
           </View>
         ) : null}
-      </View>
+      </Animated.View>
     </Modal>
   );
 }
@@ -196,21 +211,10 @@ class BlurErrorBoundary extends React.Component {
 
 function SafeBlur() {
   try {
-    // In some runtimes (e.g. missing native module / incompatible build),
-    // rendering BlurView throws a redbox "Unimplemented component: <ViewManagerAdapter_ExpoBlur_...>".
-    // We guard against that by ensuring the native view manager is actually registered.
-    const hasConfig =
-      typeof UIManager?.getViewManagerConfig === 'function' &&
-      (Boolean(UIManager.getViewManagerConfig('ExpoBlurView')) ||
-        Boolean(UIManager.getViewManagerConfig('ViewManagerAdapter_ExpoBlur_ExpoBlurView')));
-    if (!hasConfig) {
-      return null;
-    }
-
     const { BlurView } = require('expo-blur');
     return (
       <BlurErrorBoundary>
-        <BlurView intensity={28} tint="dark" style={StyleSheet.absoluteFillObject} />
+        <BlurView intensity={40} style={StyleSheet.absoluteFillObject} />
       </BlurErrorBoundary>
     );
   } catch {
@@ -232,11 +236,17 @@ function makeStyles({ colors, spacing }) {
       marginBottom: 6,
       fontWeight: '800',
       letterSpacing: -0.3,
+      textShadowColor: 'rgba(0,0,0,0.3)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 8,
     },
     sub: {
       color: 'rgba(255,255,255,0.88)',
       marginBottom: 120,
       fontWeight: '600',
+      textShadowColor: 'rgba(0,0,0,0.3)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 6,
     },
     burst: {
       ...StyleSheet.absoluteFillObject,
@@ -253,4 +263,3 @@ function makeStyles({ colors, spacing }) {
     },
   });
 }
-

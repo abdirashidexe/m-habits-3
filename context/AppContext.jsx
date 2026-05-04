@@ -7,6 +7,7 @@ import React, {
   useReducer,
   useRef,
 } from 'react';
+import { parseISO, isValid, startOfDay, addDays, isBefore } from 'date-fns';
 import {
   appReducer,
   initialState,
@@ -14,11 +15,14 @@ import {
   defaultUserProfile,
 } from './AppReducer';
 import * as storage from '../utils/storage';
+import { checkPlusEntitlement } from '../utils/purchases';
 import { LANGUAGE_IDS } from '../constants/languages';
 import { COLOR_THEME_IDS } from '../theme';
 import i18n from '../i18n';
 import { syncRtlForLanguage } from '../utils/rtl';
 import { setDevDateOverride } from '../utils/now';
+import { toLocalDateString, parseYmd } from '../utils/dates';
+import { isHabitDueOnDate } from '../utils/streak';
 import {
   cancelHabitReminder,
   requestNotificationPermissions,
@@ -114,10 +118,11 @@ export function AppProvider({ children }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [habits, habitLogs, userProfileRaw, onboardedRaw, masterRaw, installDateRaw, devDateRaw] =
+      const [habits, habitLogs, dailySummaries, userProfileRaw, onboardedRaw, masterRaw, installDateRaw, devDateRaw] =
         await Promise.all([
           storage.readJson(storage.KEYS.habits, []),
           storage.readJson(storage.KEYS.habitLogs, []),
+          storage.readJson(storage.KEYS.dailySummaries, {}),
           storage.readJson(storage.KEYS.userProfile, null),
           storage.readJson(storage.KEYS.onboarded, 'false'),
           storage.readJson(storage.KEYS.masterNotifications, 'true'),
@@ -148,6 +153,7 @@ export function AppProvider({ children }) {
         payload: {
           habits: habitsNorm,
           habitLogs,
+          dailySummaries: dailySummaries && typeof dailySummaries === 'object' ? dailySummaries : {},
           userProfile,
           onboarded: onboardedRaw === 'true',
           masterNotificationsEnabled: masterRaw !== 'false',
@@ -163,6 +169,16 @@ export function AppProvider({ children }) {
 
   useEffect(() => {
     if (!state.hydrated) return;
+    (async () => {
+      const entitled = await checkPlusEntitlement();
+      if (entitled !== state.userProfile.isPlus) {
+        dispatch({ type: ActionTypes.SET_PLUS, payload: entitled });
+      }
+    })();
+  }, [state.hydrated, state.userProfile.isPlus]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
     storage.writeJson(storage.KEYS.habits, state.habits);
   }, [state.habits, state.hydrated]);
 
@@ -170,6 +186,48 @@ export function AppProvider({ children }) {
     if (!state.hydrated) return;
     storage.writeJson(storage.KEYS.habitLogs, state.habitLogs);
   }, [state.habitLogs, state.hydrated]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
+    storage.writeJson(storage.KEYS.dailySummaries, state.dailySummaries || {});
+  }, [state.dailySummaries, state.hydrated]);
+
+  useEffect(() => {
+    if (!state.hydrated) return;
+    const installIso = state.installDate;
+    if (typeof installIso !== 'string') return;
+    const installDate = parseISO(installIso);
+    if (!isValid(installDate)) return;
+
+    const todayStr = toLocalDateString(new Date());
+    const customHabits = Array.isArray(state.habits) ? state.habits.filter((h) => h && h.type === 'custom') : [];
+    const logs = Array.isArray(state.habitLogs) ? state.habitLogs : [];
+    const existing = state.dailySummaries && typeof state.dailySummaries === 'object' ? state.dailySummaries : {};
+
+    /** @type {Record<string, { dueIds: string[], dueCount: number, completedDueCount: number }>} */
+    const patch = {};
+    let changed = false;
+
+    const start = startOfDay(installDate);
+    const end = startOfDay(parseYmd(todayStr));
+
+    for (let d = start; isBefore(d, end); d = addDays(d, 1)) {
+      const ds = toLocalDateString(d);
+      if (existing[ds]) continue;
+
+      const dueHabits = customHabits.filter((h) => isHabitDueOnDate(h, d));
+      const dueIds = dueHabits.map((h) => h.id);
+      const dueIdSet = new Set(dueIds);
+      const completedDueCount = logs.filter((l) => l && l.date === ds && l.completed === true && dueIdSet.has(l.habitId)).length;
+
+      patch[ds] = { dueIds, dueCount: dueIds.length, completedDueCount };
+      changed = true;
+    }
+
+    if (changed) {
+      dispatch({ type: ActionTypes.UPSERT_DAILY_SUMMARIES, payload: patch });
+    }
+  }, [state.habits, state.habitLogs, state.dailySummaries, state.hydrated, state.installDate]);
 
   useEffect(() => {
     if (!state.hydrated) return;

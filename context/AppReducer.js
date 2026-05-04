@@ -31,7 +31,7 @@ import { nowIso } from '../utils/now';
  * @property {string} joinedAt
  * @property {string} timezone
  * @property {boolean} darkMode
- * @property {'main' | 'pink' | 'blue' | 'red' | 'orange' | 'purple' | 'brown' | 'gray'} colorTheme
+ * @property {'main' | 'pink' | 'blue' | 'red' | 'purple' | 'brown' | 'gray'} colorTheme
  * @property {'en' | 'ar' | 'ur' | 'so' | 'id'} language
  */
 
@@ -39,6 +39,7 @@ import { nowIso } from '../utils/now';
  * @typedef {Object} AppState
  * @property {Habit[]} habits
  * @property {HabitLog[]} habitLogs
+ * @property {Record<string, { dueIds: string[], dueCount: number, completedDueCount: number }>} dailySummaries
  * @property {UserProfile} userProfile
  * @property {boolean} onboarded
  * @property {boolean} masterNotificationsEnabled
@@ -64,6 +65,7 @@ export const defaultUserProfile = {
 export const initialState = {
   habits: [],
   habitLogs: [],
+  dailySummaries: {},
   userProfile: { ...defaultUserProfile },
   onboarded: false,
   masterNotificationsEnabled: true,
@@ -91,6 +93,7 @@ export const ActionTypes = {
   DELETE_HABIT: 'DELETE_HABIT',
   SET_HABIT_LOGS: 'SET_HABIT_LOGS',
   TOGGLE_HABIT_LOG: 'TOGGLE_HABIT_LOG',
+  UPSERT_DAILY_SUMMARIES: 'UPSERT_DAILY_SUMMARIES',
   RESET_ALL: 'RESET_ALL',
 };
 
@@ -229,6 +232,16 @@ export function appReducer(state, action) {
         });
       }
       return { ...state, habitLogs: next };
+    }
+    case ActionTypes.UPSERT_DAILY_SUMMARIES: {
+      const patch = action.payload && typeof action.payload === 'object' ? action.payload : {};
+      return {
+        ...state,
+        dailySummaries: {
+          ...(state.dailySummaries || {}),
+          ...patch,
+        },
+      };
     }
     case ActionTypes.RESET_ALL:
       return {

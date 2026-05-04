@@ -186,7 +186,10 @@ export default function HabitsScreen() {
               createdAt && isValid(createdAt)
                 ? differenceInCalendarDays(now(), createdAt) + 1
                 : null;
-            const showAge = typeof ageDays === 'number' && ageDays < 7;
+            const hasFirstCompletion = state.habitLogs.some(
+              (l) => l && l.habitId === h.id && l.completed === true
+            );
+            const showAge = hasFirstCompletion && typeof ageDays === 'number' && ageDays < 7;
             const RowWrap = locked ? Pressable : View;
             const rowWrapProps = locked
               ? { onPress: () => openEdit(h, true), accessibilityRole: 'button' }
