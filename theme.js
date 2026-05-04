@@ -40,10 +40,10 @@ export const darkColors = {
   plusGold: '#D2A35A',
 };
 
-/** @typedef {'main' | 'pink' | 'blue' | 'red' | 'orange' | 'purple' | 'brown' | 'gray'} ColorThemeId */
+/** @typedef {'main' | 'pink' | 'blue' | 'red' | 'purple' | 'brown' | 'gray'} ColorThemeId */
 
 /** @type {ColorThemeId[]} */
-export const COLOR_THEME_IDS = ['main', 'pink', 'blue', 'red', 'orange', 'purple', 'brown', 'gray'];
+export const COLOR_THEME_IDS = ['main', 'pink', 'blue', 'red', 'purple', 'brown', 'gray'];
 
 const DARK_THEME_SURFACES = {
   main: {
@@ -51,8 +51,8 @@ const DARK_THEME_SURFACES = {
     surface: '#161f17',
     surfaceElevated: '#1c2a1e',
     divider: '#2a3d2c',
-    primary: '#5c7a5f',
-    primaryLight: '#7a9e7e',
+    primary: '#606c38',
+    primaryLight: '#7a8552',
   },
   pink: {
     background: '#150f13',
@@ -75,40 +75,32 @@ const DARK_THEME_SURFACES = {
     surface: '#1f1616',
     surfaceElevated: '#2a1c1c',
     divider: '#3d2a2a',
-    primary: '#9e5c5c',
-    primaryLight: '#c47a7a',
-  },
-  orange: {
-    background: '#150f0a',
-    surface: '#1f1610',
-    surfaceElevated: '#2a1e14',
-    divider: '#3d2e1a',
-    primary: '#9e7a5c',
-    primaryLight: '#c49e7a',
+    primary: '#FF5A5A',
+    primaryLight: '#FF8585',
   },
   purple: {
     background: '#110f15',
     surface: '#191620',
     surfaceElevated: '#211c2a',
     divider: '#312a3d',
-    primary: '#7a5c9e',
-    primaryLight: '#9e7ac4',
+    primary: '#B07CFF',
+    primaryLight: '#C9A3FF',
   },
   brown: {
     background: '#120f0d',
     surface: '#1c1713',
     surfaceElevated: '#261f19',
     divider: '#3a2e26',
-    primary: '#9e7a5c',
-    primaryLight: '#c4a07a',
+    primary: '#D08A52',
+    primaryLight: '#E2A475',
   },
   gray: {
     background: '#0f0f0f',
     surface: '#171717',
     surfaceElevated: '#202020',
     divider: '#2e2e2e',
-    primary: '#7a7a7a',
-    primaryLight: '#9e9e9e',
+    primary: '#CFCFCF',
+    primaryLight: '#E1E1E1',
   },
 };
 
@@ -133,49 +125,42 @@ export function getColors(mode = 'light', colorTheme = 'main') {
     const patch =
       mode === 'dark'
         ? { primary: '#C97B92', primaryLight: '#E09AAC', success: '#C97B92' }
-        : { primary: '#9B5B6E', primaryLight: '#B87A8C', success: '#9B5B6E' };
+        : { primary: '#B23A62', primaryLight: '#D85A86', success: '#B23A62' };
     return { ...base, ...patch };
   }
   if (colorTheme === 'blue') {
     const patch =
       mode === 'dark'
         ? { primary: '#6A9BD4', primaryLight: '#8BB5E8', success: '#6A9BD4' }
-        : { primary: '#4A6B8A', primaryLight: '#6A8FB0', success: '#4A6B8A' };
+        : { primary: '#1E6FD6', primaryLight: '#4C95F0', success: '#1E6FD6' };
     return { ...base, ...patch };
   }
   if (colorTheme === 'red') {
     const patch =
       mode === 'dark'
         ? { primary: '#E07070', primaryLight: '#F09898', success: '#E07070' }
-        : { primary: '#A63D3D', primaryLight: '#C45A5A', success: '#A63D3D' };
-    return { ...base, ...patch };
-  }
-  if (colorTheme === 'orange') {
-    const patch =
-      mode === 'dark'
-        ? { primary: '#E88A4A', primaryLight: '#F5AC72', success: '#E88A4A' }
-        : { primary: '#C05621', primaryLight: '#D97A40', success: '#C05621' };
+        : { primary: '#C62828', primaryLight: '#E84A4A', success: '#C62828' };
     return { ...base, ...patch };
   }
   if (colorTheme === 'purple') {
     const patch =
       mode === 'dark'
         ? { primary: '#9B7EC8', primaryLight: '#B9A0DC', success: '#9B7EC8' }
-        : { primary: '#6B4C8A', primaryLight: '#8A6BAE', success: '#6B4C8A' };
+        : { primary: '#6F3CC3', primaryLight: '#9563E6', success: '#6F3CC3' };
     return { ...base, ...patch };
   }
   if (colorTheme === 'brown') {
     const patch =
       mode === 'dark'
         ? { primary: '#A88B72', primaryLight: '#C4A88C', success: '#A88B72' }
-        : { primary: '#6D4C3A', primaryLight: '#8B684E', success: '#6D4C3A' };
+        : { primary: '#7A3E1D', primaryLight: '#A8653A', success: '#7A3E1D' };
     return { ...base, ...patch };
   }
   if (colorTheme === 'gray') {
     const patch =
       mode === 'dark'
         ? { primary: '#B8B8B8', primaryLight: '#D4D4D4', success: '#B8B8B8' }
-        : { primary: '#3D3D3D', primaryLight: '#5C5C5C', success: '#3D3D3D' };
+        : { primary: '#2E2E2E', primaryLight: '#5A5A5A', success: '#2E2E2E' };
     return { ...base, ...patch };
   }
   return base;

@@ -158,6 +158,7 @@ export default function StatsScreen() {
           today={today}
           habits={customHabits}
           habitLogs={state.habitLogs}
+          dailySummaries={state.dailySummaries}
           colors={colors}
           spacing={spacing}
           radii={radii}
@@ -213,7 +214,7 @@ export default function StatsScreen() {
   );
 }
 
-function MonthGrid({ monthStart, today, habits, habitLogs, colors, spacing, radii, typography }) {
+function MonthGrid({ monthStart, today, habits, habitLogs, dailySummaries, colors, spacing, radii, typography }) {
   const month0 = startOfMonth(monthStart);
   const end = endOfMonth(month0);
   const days = [];
@@ -256,23 +257,26 @@ function MonthGrid({ monthStart, today, habits, habitLogs, colors, spacing, radi
           if (!day) return <View key={`pad-${i}`} style={{ width: '14.28%', aspectRatio: 1 }} />;
 
           const dateStr = toLocalDateString(day);
-          const dueCount = habits.filter((h) => {
+          const dueHabits = habits.filter((h) => {
             const ds = day.getDay();
             if (h.frequency === 'specific_days') {
               return Array.isArray(h.specificDays) && h.specificDays.includes(ds);
             }
             return true;
-          }).length;
-          const completedCount = habits.filter((h) =>
-            completedIndex.has(`${h.id}_${dateStr}`)
-          ).length;
+          });
+          const dueCount = dueHabits.length;
+          const completedDueCount = dueHabits.filter((h) => completedIndex.has(`${h.id}_${dateStr}`)).length;
           const isFuture = day > today;
           const isToday = toLocalDateString(day) === toLocalDateString(today);
           const isPast = !isFuture && !isToday;
 
-          const allDone = totalHabits > 0 && completedCount === totalHabits;
-          const someDone = completedCount > 0 && !allDone;
-          const showNoHabitsSlash = isPast && (totalHabits === 0 || dueCount === 0);
+          const snap = isPast && dailySummaries && typeof dailySummaries === 'object' ? dailySummaries[dateStr] : null;
+          const effDueCount = snap ? Number(snap.dueCount) : dueCount;
+          const effCompletedDueCount = snap ? Number(snap.completedDueCount) : completedDueCount;
+
+          const allDone = effDueCount > 0 && effCompletedDueCount === effDueCount;
+          const someDone = effCompletedDueCount > 0 && !allDone;
+          const showNoHabitsSlash = isPast && (totalHabits === 0 || effDueCount === 0);
 
           const bgColor = isFuture
             ? 'transparent'

@@ -28,7 +28,7 @@
     "noHabitsDue": "No custom habits due today.",
     "addHabit": "Add habit",
     "openProfile": "Open profile",
-    "a11yAddHabit": "Add habit"
+    "a11yAddHabit": "Add habit","hijriDisclaimer": "Hijri date is approximate and may vary by region."
   },
   "habits": {
     "title": "Habits",
@@ -237,8 +237,8 @@
     "languageHint": "You can change this anytime in Profile.",
     "trackTitle": "Build your habits",
     "trackBody": "Fajr helps you stay build and stay consistent with your habits.",
-    "sadaqahTitle": "Sadaqah that reaches further",
-    "sadaqahBody": "When you choose to give, you can support the work behind this app and help humanitarian relief reach people in need—both are meaningful ways to put your sadaqah into action.",
+    "sadaqahTitle": "Subscription = Sadaqah",
+    "sadaqahBody": "Your subscription supports the work behind this app and helps humanitarian relief reach people in need.",
     "nameQuestion": "What should we call you?",
     "namePlaceholder": "Your name",
     "getStarted": "Start",
@@ -250,7 +250,6 @@
     "main": "Main",
     "blue": "Blue",
     "red": "Red",
-    "orange": "Orange",
     "purple": "Purple",
     "brown": "Brown",
     "gray": "Dark Gray",

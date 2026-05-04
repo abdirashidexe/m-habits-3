@@ -11,7 +11,6 @@ import { useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { getDateFnsLocale } from '../../utils/dateLocale';
 import { toLocalDateString } from '../../utils/dates';
-import { generateDailyInsight } from '../../utils/insights';
 import { now } from '../../utils/now';
 import { isHabitDueOnDate } from '../../utils/streak';
 
@@ -78,7 +77,6 @@ export default function WeeklyReportModal() {
     return `${a} – ${b}`;
   }, [week.rangeStart, week.rangeEnd, dateLocale]);
 
-  const insight = useMemo(() => generateDailyInsight(state.habits, state.habitLogs, today), [state.habits, state.habitLogs, today]);
   const plus = Boolean(state.userProfile.isPlus);
 
   return (
@@ -145,17 +143,6 @@ export default function WeeklyReportModal() {
             ))}
           </View>
         )}
-
-        {plus && insight.message ? (
-          <View style={[styles.card, shadows.card]}>
-            <Text style={[typography.caption, styles.closeMsg]}>{insight.message}</Text>
-          </View>
-        ) : null}
-
-        <View style={[styles.card, shadows.card]}>
-          <Text style={[typography.heading, styles.ayahArabic]}>{insight.arabic}</Text>
-          <Text style={[typography.bodySmall, styles.ayahTranslation]}>{insight.translation}</Text>
-        </View>
       </ScrollView>
     </View>
   );
@@ -229,15 +216,6 @@ function makeStyles({ colors, spacing, radii }) {
     dotDone: { backgroundColor: colors.primary, borderColor: colors.primary },
     dotMissed: { backgroundColor: 'transparent', borderColor: colors.divider },
     dotNoDue: { backgroundColor: colors.surfaceElevated, borderColor: colors.surfaceElevated, opacity: 0.7 },
-    closeMsg: { color: colors.textMuted, textAlign: 'center', lineHeight: 18 },
-    ayahArabic: {
-      color: colors.textPrimary,
-      textAlign: 'center',
-      writingDirection: 'rtl',
-      lineHeight: 28,
-      marginBottom: spacing.sm,
-    },
-    ayahTranslation: { color: colors.textSecondary, textAlign: 'center', lineHeight: 20 },
   });
 }
 

@@ -3,15 +3,16 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { HabitCard } from '../../components/HabitCard';
 import { HabitCompletionRitual } from '../../components/HabitCompletionRitual';
+import { MOTIVATION_QUOTE_COUNT } from '../../constants/motivation';
 import { ActionTypes, useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
-import { generateDailyInsight } from '../../utils/insights';
 import { getDateFnsLocale } from '../../utils/dateLocale';
-import { formatDateDisplay, formatHijriDisplay, toLocalDateString } from '../../utils/dates';
+import { formatDateDisplay, formatHijriDisplay, getDayOfYear, toLocalDateString } from '../../utils/dates';
 import { now, nowIso } from '../../utils/now';
 import { isHabitDueOnDate } from '../../utils/streak';
 
@@ -72,6 +73,17 @@ export default function HomeScreen() {
     [customHabits, today]
   );
 
+  const completedCount = dueTodayList.filter((h) => {
+    const log = state.habitLogs.find((l) => l.habitId === h.id && l.date === todayStr);
+    return Boolean(log?.completed);
+  }).length;
+  const totalCount = dueTodayList.length;
+  const progress = totalCount > 0 ? completedCount / totalCount : 0;
+  const prevDueCountRef = useRef(dueTodayList.length);
+  useEffect(() => {
+    prevDueCountRef.current = dueTodayList.length;
+  }, [dueTodayList.length]);
+
   const glowPulse = useRef(new Animated.Value(0)).current;
   const glowOpacity = useMemo(
     () => glowPulse.interpolate({ inputRange: [0, 1], outputRange: [0.32, 0.78] }),
@@ -112,32 +124,30 @@ export default function HomeScreen() {
   const [ritualOn, setRitualOn] = useState(false);
 
   const toggleHabit = (habitId, completed) => {
+    const isCompleting = completed === false;
+    const dueCountShrank = dueTodayList.length < prevDueCountRef.current;
+    if (isCompleting && !dueCountShrank) {
+      const willCompleteAll =
+        dueTodayList.length > 0 &&
+        dueTodayList.some((h) => h.id === habitId) &&
+        dueTodayList.every((h) => {
+          if (h.id === habitId) return true;
+          const log = state.habitLogs.find((l) => l.habitId === h.id && l.date === todayStr);
+          return Boolean(log?.completed);
+        });
+      if (willCompleteAll) setRitualOn(true);
+    }
     dispatch({
       type: ActionTypes.TOGGLE_HABIT_LOG,
       payload: { habitId, date: todayStr, completed: !completed, nowIso: nowIso() },
     });
   };
 
-  const allDueDone = useMemo(() => {
-    if (dueTodayList.length === 0) return false;
-    return dueTodayList.every((h) => {
-      const log = state.habitLogs.find((l) => l.habitId === h.id && l.date === todayStr);
-      return Boolean(log?.completed);
-    });
-  }, [dueTodayList, state.habitLogs, todayStr]);
-
-  const [prevAllDueDone, setPrevAllDueDone] = useState(false);
-  useEffect(() => {
-    if (!prevAllDueDone && allDueDone) {
-      setRitualOn(true);
-    }
-    if (prevAllDueDone !== allDueDone) setPrevAllDueDone(allDueDone);
-  }, [allDueDone, prevAllDueDone]);
-
-  const insight = useMemo(
-    () => generateDailyInsight(state.habits, state.habitLogs, today),
-    [state.habits, state.habitLogs, today]
-  );
+  const quoteIdx = Math.abs(getDayOfYear(today)) % MOTIVATION_QUOTE_COUNT;
+  const quote = {
+    text: t(`motivation.${quoteIdx}.text`),
+    source: t(`motivation.${quoteIdx}.source`),
+  };
   const greetKey =
     greetingPeriod(today) === 'morning'
       ? 'home.greetMorning'
@@ -150,7 +160,7 @@ export default function HomeScreen() {
     <View style={[styles.screen, { paddingTop: insets.top + spacing.md }]}>
       <HabitCompletionRitual visible={ritualOn} onFinished={() => setRitualOn(false)} />
       <ScrollView
-        contentContainerStyle={[styles.content, { flexGrow: 1, paddingBottom: spacing.xl }]}
+        contentContainerStyle={[styles.content, { flexGrow: 1, paddingBottom: 0 }]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.main}>
@@ -174,6 +184,9 @@ export default function HomeScreen() {
               {formatDateDisplay(today, dateLocale)}
             </Text>
             <Text style={[typography.bodySmall, styles.dateHij]}>{formatHijriDisplay(today, t)}</Text>
+            <Text style={[typography.caption, styles.hijriDisclaimer]}>
+              {t('home.hijriDisclaimer')}
+            </Text>
             <Text style={[typography.caption, styles.countdown]}>{timeLeftLabel}</Text>
           </View>
 
@@ -228,24 +241,24 @@ export default function HomeScreen() {
               );
             })}
           </View>
+
+          {dueTodayList.length > 0 ? (
+            <View style={styles.arcWrap}>
+              <DailyArc
+                completedCount={completedCount}
+                totalCount={totalCount}
+                progress={progress}
+                colors={colors}
+                spacing={spacing}
+                typography={typography}
+              />
+            </View>
+          ) : null}
         </View>
 
-        <View style={[styles.footer, { paddingBottom: insets.bottom + spacing.sm }]}>
-          <View style={styles.insightCard}>
-            {!state.userProfile.isPlus ? (
-              <View style={styles.plusPill} accessibilityElementsHidden>
-                <Text style={[typography.caption, styles.plusPillTxt]}>✦ Fajr+</Text>
-              </View>
-            ) : null}
-            <Text style={[typography.heading, styles.insightArabic]}>{insight.arabic}</Text>
-            <Text style={[typography.bodySmall, styles.insightTranslation]}>{insight.translation}</Text>
-            {state.userProfile.isPlus && insight.message ? (
-              <Text style={[typography.caption, styles.insightMsg]}>{insight.message}</Text>
-            ) : null}
-          </View>
-          {/* Keep static quote data in codebase for later reuse */}
-          {/* <Text style={[typography.bodySmall, styles.quote]}>{quote.text}</Text>
-          <Text style={[typography.caption, styles.quoteSrc]}>{quote.source}</Text> */}
+        <View style={[styles.footer, { paddingBottom: insets.bottom }]}>
+          <Text style={[typography.bodySmall, styles.quote]}>{quote.text}</Text>
+          <Text style={[typography.caption, styles.quoteSrc]}>{quote.source}</Text>
         </View>
       </ScrollView>
     </View>
@@ -306,6 +319,25 @@ function makeStyles({ colors, radii, spacing }) {
       borderWidth: 1,
       borderColor: colors.divider,
     },
+    arcWrap: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: spacing.lg,
+    },
+    arcContainer: {
+      width: 120,
+      height: 120,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    arcFraction: {
+      position: 'absolute',
+      textAlign: 'center',
+    },
+    arcLabel: {
+      marginTop: spacing.sm,
+      textAlign: 'center',
+    },
     dates: {
       marginBottom: spacing.lg,
       paddingHorizontal: spacing.xs,
@@ -320,6 +352,12 @@ function makeStyles({ colors, radii, spacing }) {
       marginTop: spacing.xs,
       marginBottom: spacing.md,
       textAlign: 'center',
+    },
+    hijriDisclaimer: {
+      color: colors.textMuted,
+      textAlign: 'center',
+      marginTop: spacing.xs,
+      marginBottom: spacing.xs,
     },
     countdown: {
       color: colors.textMuted,
@@ -365,38 +403,8 @@ function makeStyles({ colors, radii, spacing }) {
     footer: {
       marginTop: spacing.md,
       paddingTop: spacing.sm,
-    },
-    insightCard: {
-      paddingVertical: spacing.xs,
-      paddingHorizontal: 0,
-      position: 'relative',
-    },
-    plusPill: {
-      position: 'absolute',
-      top: 0,
-      right: 0,
-    },
-    plusPillTxt: {
-      color: colors.plusGold,
-      fontWeight: '700',
-    },
-    insightArabic: {
-      color: colors.textPrimary,
-      textAlign: 'center',
-      writingDirection: 'rtl',
-      marginBottom: spacing.sm,
-      lineHeight: 28,
-    },
-    insightTranslation: {
-      color: colors.textSecondary,
-      textAlign: 'center',
-      lineHeight: 20,
-    },
-    insightMsg: {
-      color: colors.textMuted,
-      textAlign: 'center',
-      marginTop: spacing.sm,
-      lineHeight: 18,
+      borderTopWidth: 1,
+      borderTopColor: colors.divider,
     },
     quote: {
       color: colors.textSecondary,
@@ -410,4 +418,76 @@ function makeStyles({ colors, radii, spacing }) {
       marginTop: spacing.xs,
     },
   });
+}
+
+function DailyArc({ completedCount, totalCount, progress, colors, spacing, typography }) {
+  const radius = 54;
+  const strokeWidth = 8;
+  const size = 120;
+  const circumference = 2 * Math.PI * radius;
+
+  const animatedProgress = useRef(new Animated.Value(progress)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedProgress, {
+      toValue: progress,
+      duration: 600,
+      useNativeDriver: false,
+    }).start();
+  }, [animatedProgress, progress]);
+
+  const strokeDashoffset = animatedProgress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [circumference, 0],
+    extrapolate: 'clamp',
+  });
+
+  const label =
+    completedCount === 0
+      ? 'Your day is waiting.'
+      : completedCount > 0 && completedCount < totalCount
+        ? 'Keep going.'
+        : 'Well done. Come back tomorrow.';
+
+  const AnimatedCircle = useMemo(() => Animated.createAnimatedComponent(Circle), []);
+
+  return (
+    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+        <Svg width={size} height={size}>
+          <Circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={colors.divider}
+            strokeWidth={strokeWidth}
+            fill="none"
+          />
+          <AnimatedCircle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke={colors.primary}
+            strokeWidth={strokeWidth}
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={`${circumference} ${circumference}`}
+            strokeDashoffset={strokeDashoffset}
+            rotation="-90"
+            origin="60, 60"
+          />
+        </Svg>
+
+        <Text style={[typography.subheading, { color: colors.textPrimary, position: 'absolute', textAlign: 'center' }]}>
+          {completedCount}/{totalCount}
+        </Text>
+      </View>
+
+      <Text
+        style={[typography.caption, { color: colors.textSecondary, marginTop: spacing.sm, textAlign: 'center' }]}
+      >
+        {label}
+      </Text>
+    </View>
+  );
 }

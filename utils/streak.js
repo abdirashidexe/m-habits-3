@@ -288,7 +288,8 @@ export function isDateInFutureYmd(ymd, ref = now()) {
 export function calculateMonthlyConsistency(habitId, logs, habit, referenceDate = now()) {
   const ref0 = startOfDay(referenceDate);
   const month0 = startOfMonth(ref0);
-  const created0 = startOfDay(parseISO(habit?.createdAt || ''));
+  const createdStr = habit?.createdAt ? habit.createdAt.slice(0, 10) : '';
+  const created0 = createdStr ? startOfDay(parseYmd(createdStr)) : new Date(0);
   const start = isValid(created0) && isAfter(created0, month0) ? created0 : month0;
 
   let completedDays = 0;

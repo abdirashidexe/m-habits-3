@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const KEYS = {
   habits: 'fajr_habits',
   habitLogs: 'fajr_habit_logs',
+  dailySummaries: 'fajr_daily_summaries',
   userProfile: 'fajr_user_profile',
   onboarded: 'fajr_onboarded',
   masterNotifications: 'fajr_master_notifications',
