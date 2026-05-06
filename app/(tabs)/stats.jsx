@@ -1,18 +1,20 @@
-import { addDays, addMonths, endOfMonth, format, startOfDay, startOfMonth } from 'date-fns';
+import { addDays, addMonths, endOfMonth, format, isValid, parseISO, startOfDay, startOfMonth } from 'date-fns';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button } from '../../components/Button';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { Button } from '../../components/Button';
 import { useApp } from '../../context/AppContext';
 import { useFajrTheme } from '../../hooks/useFajrTheme';
 import { getDateFnsLocale } from '../../utils/dateLocale';
-import { toLocalDateString } from '../../utils/dates';
+import { parseYmd, toLocalDateString } from '../../utils/dates';
 import { now } from '../../utils/now';
 import { calculateMonthlyConsistency } from '../../utils/streak';
+
 
 export default function StatsScreen() {
   // Rewritten per spec: ranking rows with emojis, remove week glance entirely,
@@ -24,7 +26,12 @@ export default function StatsScreen() {
   const { colors, radii, shadows, spacing, typography } = useFajrTheme();
   const styles = makeStyles({ colors, radii, spacing });
   const plus = Boolean(state.userProfile.isPlus);
-  const today = now();
+  const [today, setToday] = useState(() => now());
+  useFocusEffect(
+    useCallback(() => {
+      setToday(now());
+    }, [])
+  );
 
   const dateLocale = useMemo(
     () => getDateFnsLocale(state.userProfile.language || 'en'),
@@ -158,7 +165,6 @@ export default function StatsScreen() {
           today={today}
           habits={customHabits}
           habitLogs={state.habitLogs}
-          dailySummaries={state.dailySummaries}
           colors={colors}
           spacing={spacing}
           radii={radii}
@@ -214,7 +220,7 @@ export default function StatsScreen() {
   );
 }
 
-function MonthGrid({ monthStart, today, habits, habitLogs, dailySummaries, colors, spacing, radii, typography }) {
+function MonthGrid({ monthStart, today, habits, habitLogs, colors, spacing, radii, typography }) {
   const month0 = startOfMonth(monthStart);
   const end = endOfMonth(month0);
   const days = [];
@@ -227,10 +233,6 @@ function MonthGrid({ monthStart, today, habits, habitLogs, dailySummaries, color
   const logsInMonth = Array.isArray(habitLogs)
     ? habitLogs.filter((l) => l && daySet.has(l.date))
     : [];
-
-  const completedIndex = new Set(
-    logsInMonth.filter((l) => l.completed === true).map((l) => `${l.habitId}_${l.date}`)
-  );
 
   const totalHabits = habits.length;
 
@@ -256,27 +258,33 @@ function MonthGrid({ monthStart, today, habits, habitLogs, dailySummaries, color
         {cells.map((day, i) => {
           if (!day) return <View key={`pad-${i}`} style={{ width: '14.28%', aspectRatio: 1 }} />;
 
-          const dateStr = toLocalDateString(day);
           const dueHabits = habits.filter((h) => {
-            const ds = day.getDay();
+            if (h.createdAt) {
+              // createdAt is stored as ISO; slice(0,10) is UTC and can shift the local day.
+              // Use parseISO so "created day" matches the user's local calendar day.
+              const createdAt = parseISO(h.createdAt);
+              const createdDay = isValid(createdAt)
+                ? startOfDay(createdAt)
+                : startOfDay(parseYmd(h.createdAt.slice(0, 10)));
+              if (day < createdDay) return false;
+            }
             if (h.frequency === 'specific_days') {
-              return Array.isArray(h.specificDays) && h.specificDays.includes(ds);
+              return Array.isArray(h.specificDays) && h.specificDays.includes(day.getDay());
             }
             return true;
           });
+          const dateStr = toLocalDateString(day);
           const dueCount = dueHabits.length;
-          const completedDueCount = dueHabits.filter((h) => completedIndex.has(`${h.id}_${dateStr}`)).length;
+          const completedDueCount = dueHabits.filter((h) =>
+            habitLogs.some((l) => l.habitId === h.id && l.date === dateStr && l.completed === true)
+          ).length;
           const isFuture = day > today;
           const isToday = toLocalDateString(day) === toLocalDateString(today);
           const isPast = !isFuture && !isToday;
 
-          const snap = isPast && dailySummaries && typeof dailySummaries === 'object' ? dailySummaries[dateStr] : null;
-          const effDueCount = snap ? Number(snap.dueCount) : dueCount;
-          const effCompletedDueCount = snap ? Number(snap.completedDueCount) : completedDueCount;
-
-          const allDone = effDueCount > 0 && effCompletedDueCount === effDueCount;
-          const someDone = effCompletedDueCount > 0 && !allDone;
-          const showNoHabitsSlash = isPast && (totalHabits === 0 || effDueCount === 0);
+          const allDone = dueCount > 0 && completedDueCount === dueCount;
+          const someDone = completedDueCount > 0 && !allDone;
+          const showNoHabitsSlash = isPast && (totalHabits === 0 || dueCount === 0);
 
           const bgColor = isFuture
             ? 'transparent'

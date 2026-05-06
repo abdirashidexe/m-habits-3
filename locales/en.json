@@ -141,7 +141,8 @@
     "resetContinue": "Continue",
     "resetSureTitle": "Are you absolutely sure?",
     "resetSureMsg": "This cannot be undone.",
-    "eraseAll": "Erase everything"
+    "eraseAll": "Erase everything",
+    "resetRestartHint": "If the app looks unusual after reset, close and reopen it."
   },
   "plus": {
     "badge": "✦ Plus"

@@ -3,8 +3,8 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Easing, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle } from 'react-native-svg';
 
 import { HabitCard } from '../../components/HabitCard';
 import { HabitCompletionRitual } from '../../components/HabitCompletionRitual';
@@ -184,7 +184,7 @@ export default function HomeScreen() {
               {formatDateDisplay(today, dateLocale)}
             </Text>
             <Text style={[typography.bodySmall, styles.dateHij]}>{formatHijriDisplay(today, t)}</Text>
-            <Text style={[typography.caption, styles.hijriDisclaimer]}>
+            <Text style={[{fontStyle: 'italic'}, styles.hijriDisclaimer]}>
               {t('home.hijriDisclaimer')}
             </Text>
             <Text style={[typography.caption, styles.countdown]}>{timeLeftLabel}</Text>
@@ -350,14 +350,15 @@ function makeStyles({ colors, radii, spacing }) {
     dateHij: {
       color: colors.textSecondary,
       marginTop: spacing.xs,
-      marginBottom: spacing.md,
+      // marginBottom: spacing.md,
       textAlign: 'center',
     },
     hijriDisclaimer: {
       color: colors.textMuted,
       textAlign: 'center',
       marginTop: spacing.xs,
-      marginBottom: spacing.xs,
+      marginBottom: spacing.md,
+      fontSize: 10,
     },
     countdown: {
       color: colors.textMuted,

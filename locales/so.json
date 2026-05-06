@@ -142,7 +142,8 @@
     "resetContinue": "Sii wad",
     "resetSureTitle": "Ma hubtaa gebi ahaanba?",
     "resetSureMsg": "Lama celin karo.",
-    "eraseAll": "Tirtir wax walba"
+    "eraseAll": "Tirtir wax walba",
+    "resetRestartHint": "Haddii app-ka ku dhammay oo ku uu celinayay, xir u xiray."
   },
   "plus": {
     "badge": "✦ Plus"

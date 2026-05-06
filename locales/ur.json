@@ -142,7 +142,8 @@
     "resetContinue": "جاری",
     "resetSureTitle": "پکا؟",
     "resetSureMsg": "واپس نہیں۔",
-    "eraseAll": "سب مٹا دیں"
+    "eraseAll": "سب مٹا دیں",
+    "resetRestartHint": "یہ ایپ کو دوبارہ شروع کرے گا اور تمام ڈیٹا کو مٹائے گا۔"
   },
   "plus": {
     "badge": "✦ پلس"

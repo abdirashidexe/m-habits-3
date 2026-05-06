@@ -142,7 +142,8 @@
     "resetContinue": "Lanjutkan",
     "resetSureTitle": "Anda benar-benar yakin?",
     "resetSureMsg": "Tindakan ini tidak dapat dibatalkan.",
-    "eraseAll": "Hapus semuanya"
+    "eraseAll": "Hapus semuanya",
+    "resetRestartHint": "Ini akan memulai ulang aplikasi dan menghapus semua data."
   },
   "plus": {
     "badge": "✦ Plus"

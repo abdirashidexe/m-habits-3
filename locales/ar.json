@@ -29,7 +29,7 @@
     "addHabit": "إضافة عادة",
     "openProfile": "فتح الملف الشخصي",
     "a11yAddHabit": "إضافة عادة",
-    "hijriDisclaimer": "تاريخ الهجرة هو تقريبي وقد يختلف بناءً على المنطقة."
+    "hijriDisclaimer": "تقريبي. قد يختلف بناءً على المنطقة."
   },
   "habits": {
     "title": "العادات",
@@ -142,7 +142,8 @@
     "resetContinue": "متابعة",
     "resetSureTitle": "هل أنت متأكد تماماً؟",
     "resetSureMsg": "لا يمكن التراجع.",
-    "eraseAll": "مسح كل شيء"
+    "eraseAll": "مسح كل شيء",
+    "resetRestartHint": "سيتم إعادة تشغيل التطبيق ومسح كل البيانات."
   },
   "plus": {
     "badge": "✦ بلس"

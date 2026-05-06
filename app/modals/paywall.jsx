@@ -315,11 +315,7 @@ export default function PaywallModal() {
         showHeadline={false}
         onFinished={() => {
           setPurchaseRitualOn(false);
-          setDialog({
-            title: t('paywall.welcomeTitle'),
-            message: t('paywall.welcomeMsg'),
-            actions: [{ label: t('common.ok'), onPress: () => router.back() }],
-          });
+          setTimeout(() => router.back(), 300);
         }}
       />
       <ThemedMessageModal dialog={dialog} onDismiss={() => setDialog(null)} />

@@ -122,7 +122,7 @@ export default function ProfileScreen() {
           onPress: () => {
             setDialog({
               title: t('profile.resetSureTitle'),
-              message: t('profile.resetSureMsg'),
+              message: `${t('profile.resetSureMsg')}\n\n${t('profile.resetRestartHint')}`,
               actions: [
                 { label: t('common.cancel'), variant: 'secondary' },
                 {
@@ -279,7 +279,7 @@ export default function ProfileScreen() {
           </Pressable>
           <Text style={[typography.bodySmall, styles.aboutTxt]}>{t('profile.aboutCardBody')}</Text>
           <Pressable
-            onPress={() => void Linking.openURL('https://abdirashidexe.github.io/m-habits-3/')}
+            onPress={() => void Linking.openURL('https://kasrahlabs.com/privacy')}
             style={styles.aboutRow}
             accessibilityRole="button"
             accessibilityLabel={t('profile.privacyLink')}
